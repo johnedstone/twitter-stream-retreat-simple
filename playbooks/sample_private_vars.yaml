@@ -1,4 +1,5 @@
 ---
 HOSTNAME: "your.hostname.org"
 local_timezone: 'America/New_York'
+app_name: "your_app_name" # used to make app directory
 

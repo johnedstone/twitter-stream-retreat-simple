@@ -11,4 +11,6 @@ ansible-playbook 2.9.6
 ansible-playbook --check --flush-cache --diff -i inventory.ini playbook.yaml 
 
 ansible-playbook --flush-cache --diff -i inventory.ini playbook.yaml
+
+ansible-playbook --flush-cache --tags virtualenv --diff -i inventory.ini playbook.yaml
 ```

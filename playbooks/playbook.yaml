@@ -7,13 +7,9 @@
     - /opt/apps/configuration/private_vars.yaml
   connection: local
   roles:
-    - prep_work
-#    - pre_app_nginx_configuration
-#    - setup_db
-#    - install_poohbear_default
-#    - install_apps
-#    - role: check_apps_permissions
-#      tags: [app_perms]
-#    - check_nginx_conf_permissions
+    - role: prep_work
+      tags: [prep_work]
+    - role: virtualenv
+      tags: [virtualenv]
 
 # vim: ai et ts=2 sw=2 sts=2 nu
