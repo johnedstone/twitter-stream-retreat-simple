@@ -1,0 +1,4 @@
+source $VIMRUNTIME/defaults.vim
+
+set modeline
+set modelines=5

@@ -1,0 +1,56 @@
+---
+#- name: Check hostame variable
+#  debug:
+#    msg: "hostname: {{ HOSTNAME }}"
+
+- name: setup vimrc
+  copy:
+    src: vimrc
+    dest: "{{ HOME }}/.vimrc"
+
+- name: change hostname
+  become: yes
+  template:
+    src: hostname.j2
+    dest: /etc/hostname
+
+- name: set timezone correctly
+  become: yes
+  file:
+    src: "/usr/share/zoneinfo/{{ local_timezone }}"
+    path: /etc/localtime
+    state: link
+
+# https://www.cyberciti.biz/faq/ansible-apt-update-all-packages-on-ubuntu-debian-linux/
+- name: Update apt repo and cache on all Debian/Ubuntu boxes
+  become: yes
+  apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+  changed_when: False
+
+- name: Upgrade all packages on servers
+  become: yes
+  apt: upgrade=dist force_apt_get=yes
+
+- name: Check if a reboot is needed on all servers
+  register: reboot_required_file
+  stat: path=/var/run/reboot-required get_md5=no
+
+- name: Reboot server if kernel updated
+  become: yes
+  reboot:
+    msg: "Reboot initiated by Ansible for kernel updates"
+    connect_timeout: 5
+    reboot_timeout: 300
+    pre_reboot_delay: 0
+    post_reboot_delay: 30
+    test_command: uptime
+  when: reboot_required_file.stat.exists
+
+#- name: install apt packages
+#  become: yes
+#  apt:
+#    name: ["rsync", "nmap", "htop", "virtualenv"]
+#    state: present
+#    update-cache: yes
+ 
+# vim: ai et ts=2 sw=2 sts=2 nu

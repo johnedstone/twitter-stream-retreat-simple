@@ -1,0 +1,19 @@
+---
+- hosts: current_hosts
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+    HOME: "{{ lookup('env', 'HOME') }}"
+  vars_files:
+    - /opt/apps/configuration/private_vars.yaml
+  connection: local
+  roles:
+    - prep_work
+#    - pre_app_nginx_configuration
+#    - setup_db
+#    - install_poohbear_default
+#    - install_apps
+#    - role: check_apps_permissions
+#      tags: [app_perms]
+#    - check_nginx_conf_permissions
+
+# vim: ai et ts=2 sw=2 sts=2 nu

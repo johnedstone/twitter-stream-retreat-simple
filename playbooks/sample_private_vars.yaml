@@ -1,0 +1,4 @@
+---
+HOSTNAME: "your.hostname.org"
+local_timezone: 'America/New_York'
+
