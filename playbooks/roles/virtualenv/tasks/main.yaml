@@ -8,8 +8,8 @@
     mode: '0775'
 
 - name: Install requirements file
-  copy:
-    src: files/requirements.txt
+  template:
+    src: requirements.j2
     dest: "/opt/apps/{{ app_name }}/requirements.txt"
     owner: ubuntu
     group: ubuntu

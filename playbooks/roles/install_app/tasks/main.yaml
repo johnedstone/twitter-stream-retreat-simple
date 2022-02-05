@@ -14,11 +14,10 @@
     src: templates/logrotate.j2
     dest: "/etc/logrotate.d/{{ app_name}}"
 
-- name: Configure app sysconfig
-  become: yes
+- name: Install python script app file
   template:
-    src: twitter_app_sysconfig.j2
-    dest: "/etc/default/{{ app_name }}"
+    src: "{{ APP_SCRIPT }}.j2"
+    dest: "/opt/apps/{{ app_name }}/{{ APP_SCRIPT }}"
     #  notify:
     #- Restart "{{ app_name }" service
 

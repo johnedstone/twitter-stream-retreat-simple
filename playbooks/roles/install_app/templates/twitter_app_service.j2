@@ -1,0 +1,18 @@
+---
+[Unit]
+Description={{ app_name }} daemon
+After=network.target
+
+[Service]
+Type=simple
+Restart=always
+User=ubuntu
+Group=ubuntu
+EnvironmentFile=-/etc/default/{{ app_name }}
+
+ExecStart={{ PATH_TO_PYTHON }} /opt/apps/{{ app_name }}/{{ APP_SCRIPT }}
+
+[Install]
+WantedBy=multi-user.target
+
+# vim: ai et ts=4 sw=4 sts=4 nu
