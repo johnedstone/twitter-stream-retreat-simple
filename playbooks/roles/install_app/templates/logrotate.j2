@@ -1,0 +1,12 @@
+/var/log/{{ app_name }}/*.log {
+	weekly
+	missingok
+	rotate 5 
+	compress
+	notifempty
+	create 0660 ubuntu ubuntu
+	sharedscripts
+	postrotate
+		systemctl reload {{ app_name }}
+	endscript
+}

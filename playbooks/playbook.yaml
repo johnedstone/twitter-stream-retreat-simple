@@ -11,5 +11,7 @@
       tags: [prep_work]
     - role: virtualenv
       tags: [virtualenv]
+    - role: install_app
+      tags: [install_app]
 
 # vim: ai et ts=2 sw=2 sts=2 nu

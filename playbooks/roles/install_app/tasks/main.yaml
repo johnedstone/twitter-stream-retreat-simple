@@ -1,0 +1,41 @@
+---
+- name: Create app logging directories
+  become: yes
+  file:
+    path: "/var/log/{{ app_name }}"
+    owner: ubuntu
+    group: ubuntu
+    mode: 0775
+    state: directory
+
+- name: Enable logrotate for "{{ app_name }}"
+  become: yes
+  template:
+    src: templates/logrotate.j2
+    dest: "/etc/logrotate.d/{{ app_name}}"
+
+#- name: Configure app sysconfig
+#  become: yes
+#  template:
+#    src: systemd/gunicorn_sysconfig.j2
+#    dest: "/etc/default/gunicorn_{{ item.key }}"
+#  notify:
+#    - Restart app service
+#
+#- name: Create systemd app service file
+#  become: yes
+#  template:
+#    src: templates/systemd/gunicorn_service.j2
+#    dest: "/usr/lib/systemd/system/gunicorn_{{ item.key }}.service"
+#  notify:
+#    - Restart app service
+#
+#- name: App enable & start
+#  become: yes
+#  service:
+#    name: "{{ app_name }}"
+#    enabled: yes
+#    state: started
+
+# vim: ai et ts=2 sw=2 sts=2 nu
+
