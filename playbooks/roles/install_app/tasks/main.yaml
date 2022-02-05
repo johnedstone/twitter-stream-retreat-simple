@@ -18,16 +18,16 @@
   template:
     src: "{{ APP_SCRIPT }}.j2"
     dest: "/opt/apps/{{ app_name }}/{{ APP_SCRIPT }}"
-    #  notify:
-    #- Restart "{{ app_name }" service
+  notify:
+    - Restart twitter app
 
 - name: Create systemd app service file
   become: yes
   template:
     src: templates/twitter_app_service.j2
     dest: "/usr/lib/systemd/system/{{ app_name }}.service"
-    #notify:
-    #- Restart app service
+  notify:
+    - Restart twitter app
 
 - name: App enable & start
   become: yes
