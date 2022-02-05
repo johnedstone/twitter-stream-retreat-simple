@@ -14,28 +14,27 @@
     src: templates/logrotate.j2
     dest: "/etc/logrotate.d/{{ app_name}}"
 
-#- name: Configure app sysconfig
-#  become: yes
-#  template:
-#    src: systemd/gunicorn_sysconfig.j2
-#    dest: "/etc/default/gunicorn_{{ item.key }}"
-#  notify:
-#    - Restart app service
-#
-#- name: Create systemd app service file
-#  become: yes
-#  template:
-#    src: templates/systemd/gunicorn_service.j2
-#    dest: "/usr/lib/systemd/system/gunicorn_{{ item.key }}.service"
-#  notify:
-#    - Restart app service
-#
-#- name: App enable & start
-#  become: yes
-#  service:
-#    name: "{{ app_name }}"
-#    enabled: yes
-#    state: started
+- name: Configure app sysconfig
+  become: yes
+  template:
+    src: twitter_app_sysconfig.j2
+    dest: "/etc/default/{{ app_name }}"
+    #  notify:
+    #- Restart "{{ app_name }" service
+
+- name: Create systemd app service file
+  become: yes
+  template:
+    src: templates/twitter_app_service.j2
+    dest: "/usr/lib/systemd/system/{{ app_name }}.service"
+    #notify:
+    #- Restart app service
+
+- name: App enable & start
+  become: yes
+  service:
+    name: "{{ app_name }}"
+    enabled: yes
+    state: started
 
 # vim: ai et ts=2 sw=2 sts=2 nu
-

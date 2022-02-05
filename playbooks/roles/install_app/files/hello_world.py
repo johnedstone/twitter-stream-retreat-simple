@@ -3,6 +3,7 @@ References:
     https://stackoverflow.com/questions/34588421/how-to-log-to-journald-systemd-via-python
     https://blog.muya.co.ke/configuring-multiple-loggers-python/
 """
+import os
 import logging
 import sys
 from time import sleep
@@ -27,8 +28,8 @@ logger_stdout.addHandler(handler_stdout)
 logger_stderr.addHandler(handler_stderr)
 
 while True:
-    logger_stdout.info('hello world')
-    logger_stderr.warning('blue moon')
+    logger_stdout.info(os.getenv('HELLO_WORLD', 'Missing hello world in stdout'))
+    logger_stderr.warning(os.getenv('HELLO_WORLD_ERROR', 'Missing blue moon stderr'))
 
     sleep(60 * 2)
 
