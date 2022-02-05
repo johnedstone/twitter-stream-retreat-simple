@@ -1,0 +1,9 @@
+- name: "Restart {{ app_name }}"
+  listen: Restart twitter app 
+  become: yes
+  service:
+    name: "{{ app_name }}"
+    state: restarted
+  when: not ansible_check_mode
+
+# vim: ai et ts=4 sts=4 sw=4 nu
