@@ -3,8 +3,8 @@
 A simple example describing:
 * Retweeting a list of tweet accounts into one twitter account
 * Using [tweepy.Stream](https://docs.tweepy.org/en/stable/streaming.html)
-* Installed on an AWS Ubuntu 20.04 ec2 instance with an ansible playbook
-    * Optional: When creating instance add storage, so that it's persistent if instance is destroyed.  Mount on `/opt/apps`.
+* Installed with an ansible playbook on an AWS ec2 instance (Ubuntu 20.04 LTS)
+    * Optional: When creating the ec2, add storage, so that it's persistent if the ec2 instance is destroyed.  Mount on `/opt/apps`.
          * [Reference to format](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/add-instance-store-volumes.html)
          * [Reference to automount](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-using-volumes.html#ebs-mount-after-reboot)
     * install ansible `sudo apt upgrade && sudo apt install ansible`
