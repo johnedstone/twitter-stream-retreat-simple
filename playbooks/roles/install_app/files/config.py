@@ -5,6 +5,9 @@ import tweepy
 import logging
 import os
 
+from dotenv import load_dotenv
+load_dotenv()
+
 logger = logging.getLogger()
 
 def create_api():

@@ -11,6 +11,8 @@ import os
 import sys
 
 from config import create_api
+from dotenv import load_dotenv
+load_env()
 
 from logger import (
     # logger_stdout, # not using

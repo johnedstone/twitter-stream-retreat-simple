@@ -6,7 +6,7 @@ After=network.target
 Type=simple
 Restart=always
 
-ExecStart={{ PATH_TO_PYTHON }} /opt/apps/{{ app_name }}/{{ APP_SCRIPT }}
+ExecStart={{ PATH_TO_PYTHON }} /opt/apps/{{ app_name }}/{{ LIVE_APP_SCRIPT }}
 
 [Install]
 WantedBy=multi-user.target

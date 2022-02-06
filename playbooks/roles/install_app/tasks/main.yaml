@@ -37,10 +37,10 @@
     src: templates/logrotate.j2
     dest: "/etc/logrotate.d/{{ app_name}}"
 
-- name: Install python script app file
+- name: Install hello_world app file
   template:
-    src: "{{ APP_SCRIPT }}.j2"
-    dest: "/opt/apps/{{ app_name }}/{{ APP_SCRIPT }}"
+    src: "{{ HELLO_WORLD_APP_SCRIPT }}.j2"
+    dest: "/opt/apps/{{ app_name }}/{{ HELLO_WORLD_APP_SCRIPT }}"
   notify:
     - Restart twitter app
 
@@ -73,5 +73,11 @@
     dest: "/opt/apps/{{ app_name }}"
     archive: yes
     recursive: yes
+
+- name: Install production app
+  synchronize:
+    src: "files/{{ item }}"
+    dest: "/opt/apps/{{ app_name }}/{{ item }}"
+  with_items: "{{ Production scripts }}"
 
 # vim: ai et ts=2 sw=2 sts=2 nu
