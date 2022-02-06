@@ -36,4 +36,11 @@
     enabled: yes
     state: started
 
+- name: Rsync twitter helper scripts
+  synchronize:
+    src: files/twitter_helper_scripts
+    dest: "/opt/apps/{{ app_name }}"
+    archive: yes
+    recursive: yes
+
 # vim: ai et ts=2 sw=2 sts=2 nu
