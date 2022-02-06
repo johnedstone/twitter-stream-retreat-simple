@@ -6,12 +6,9 @@ A simple example describing:
 * Installed on an AWS Ubuntu 20.04 instance with an Ansible Playbook
     * Optional: When creating instance add storage, so that it's persistent if instance is destroyed.  Mount on `/opt/apps`.
          * [Reference to format](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/add-instance-store-volumes.html)
-         * [Reference to automount](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/add-instance-store-volumes.html)
+         * [Reference to automount](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-using-volumes.html#ebs-mount-after-reboot)
     * install ansible `sudo apt upgrade && sudo apt install ansible`
     * install python3-virtualenv `sudo apt install python3-virtualenv`
-
-### tweepy.Stream
-[link to tweepy.Stream script: tbd](./)
 
 ### Link to Streaming App
 The files that this ansible playbook installs
