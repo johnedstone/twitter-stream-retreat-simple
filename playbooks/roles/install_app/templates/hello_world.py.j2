@@ -10,6 +10,9 @@ from time import sleep
 
 import tweepy
 
+from dotenv import load_dotenv
+load_dotenv()
+
 logger_stdout = logging.getLogger('hello_world.stdout')
 logger_stderr = logging.getLogger('hello_world.stderr')
 
@@ -28,8 +31,9 @@ logger_stdout.addHandler(handler_stdout)
 logger_stderr.addHandler(handler_stderr)
 
 while True:
-    logger_stdout.info(os.getenv('HELLO_WORLD', 'Missing hello world in stdout'))
-    logger_stderr.warning(os.getenv('HELLO_WORLD_ERROR', 'Missing blue moon stderr'))
+    logger_stdout.info(os.getenv('HELLO_WORLD', 'hello world in stdout'))
+    logger_stderr.warning(os.getenv('HELLO_WORLD_ERROR', 'blue moon stderr'))
 
     sleep(60 * 30)
 
+# vim: ai et ts=4 sw=4 sts=4 nu

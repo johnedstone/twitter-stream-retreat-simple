@@ -21,6 +21,37 @@
   notify:
     - Restart twitter app
 
+- name: Install environment variables
+  template:
+    src: env.j2
+    dest: "/opt/apps/{{ app_name }}/.env"
+    owner: ubuntu
+    group: ubuntu
+    mode: 0600
+  notify:
+    - Restart twitter app
+
+- name: Enable logrotate for "{{ app_name }}"
+  become: yes
+  template:
+    src: templates/logrotate.j2
+    dest: "/etc/logrotate.d/{{ app_name}}"
+
+- name: Install python script app file
+  template:
+    src: "{{ APP_SCRIPT }}.j2"
+    dest: "/opt/apps/{{ app_name }}/{{ APP_SCRIPT }}"
+  notify:
+    - Restart twitter app
+
+- name: Install environment variables
+  template:
+    src: env.j2
+    dest: "/opt/apps/{{ app_name }}/.env"
+  notify:
+  notify:
+    - Restart twitter app
+
 - name: Create systemd app service file
   become: yes
   template:
