@@ -2,4 +2,28 @@
 HOSTNAME: "your.hostname.org"
 local_timezone: 'America/New_York'
 app_name: "your_app_name" # used to make app directory
+tweepy_version: '4.5.0'
+HELLO_WORLD_APP_SCRIPT: hello_world.py
+PATH_TO_PYTHON: "/path/to/virtualenv/python, e.g. /opt/apps/my_app/venv/bin/python"
+
+Production_scripts:
+  - config.py
+  - logger.py
+  - streaming_app.py
+
+# Toggle this for testing with hello_world
+LIVE_APP_SCRIPT: streaming_app.py
+#LIVE_APP_SCRIPT: hello_world.py
+
+HELLO_WORLD: 'Hello World: used for testing journald ...'
+HELLO_WORLD_ERROR: 'Blue Moon: used for testing journald ...'
+API_KEY: 'api_key'
+API_KEY_SECRET: "api_key_secret"
+ACCESS_TOKEN: "access_token"
+ACCESS_TOKEN_SECRET: "access_token_secret"
+#Bearer_Token: "bearer_token" # Not using at this time
+TWEET_STATUS_USER_IDS_TO_RETWEET: 'status.user.id #1,status.user.id #2,status.user.id #3'
+RETWEET_EXEMPTIONS: 'status.user.id #1'
+
+# vim: ai et ts=2 sw=2 sts=2 nu
 

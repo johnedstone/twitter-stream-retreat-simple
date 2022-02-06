@@ -2,7 +2,7 @@
 ## Description
 A simple example describing:
 * Retweeting a list of tweet accounts into one twitter account
-* Using [tweepy.Stream](https://docs.tweepy.org/en/stable/streaming.html)
+* Using [tweepy.Stream](https://docs.tweepy.org/en/stable/streaming.html) (version 4.5.0)
 * Installed with an ansible playbook on an AWS ec2 instance (Ubuntu 20.04 LTS)
     * Optional: When creating the ec2, add storage, so that it's persistent if the ec2 instance is destroyed.  Mount on `/opt/apps`.
          * [Reference to format](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/add-instance-store-volumes.html)
