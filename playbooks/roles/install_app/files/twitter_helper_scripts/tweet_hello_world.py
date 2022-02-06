@@ -1,6 +1,9 @@
 import sys
 import tweepy
 
+from dotenv import load_dotenv
+load_dotenv('../.env')
+
 from config import create_api
 api = create_api()
 

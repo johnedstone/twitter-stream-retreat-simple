@@ -118,6 +118,7 @@ def main():
 
         logger_retweet_error_file.error('Stream error - {} - {}'.format(type(e).__name__, e))
         logger_retweet_error_file.error('{} - {} - Already retweeted : {} - {}'.format(status.user.screen_name, tweet_type, retweet, status.text))
+        logger_retweet_error_file.error('{}'.format(status))
 
 if __name__ == '__main__':
     try:    

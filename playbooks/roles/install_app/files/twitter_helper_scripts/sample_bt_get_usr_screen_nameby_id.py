@@ -2,7 +2,10 @@
 import tweepy, os
 import sys
 
-auth = tweepy.OAuth2BearerHandler(os.getenv('Bearer_Token'))
+from dotenv import load_dotenv
+load_dotenv('../.env')
+
+auth = tweepy.OAuth2BearerHandler(os.getenv('BEARER_TOKEN'))
 api = tweepy.API(auth)
 user = api.get_user(user_id="{}".format(sys.argv[1]))
 print(user.screen_name)

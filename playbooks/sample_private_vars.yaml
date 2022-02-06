@@ -21,7 +21,7 @@ API_KEY: 'api_key'
 API_KEY_SECRET: "api_key_secret"
 ACCESS_TOKEN: "access_token"
 ACCESS_TOKEN_SECRET: "access_token_secret"
-#Bearer_Token: "bearer_token" # Not using at this time
+#BEARER_TOKEN: "bearer_token" # Not using at this time
 TWEET_STATUS_USER_IDS_TO_RETWEET: 'status.user.id #1,status.user.id #2,status.user.id #3'
 RETWEET_EXEMPTIONS: 'status.user.id #1'
 
