@@ -8,7 +8,7 @@ import sys
 import os
 
 from dotenv import load_dotenv
-load_dotenv
+load_dotenv()
 
 logger_stdout = logging.getLogger('stdout')
 logger_stderr = logging.getLogger('stderr')
@@ -24,8 +24,8 @@ formatter = logging.Formatter(fmt="%(asctime)s [%(levelname)s]: %(message)s in %
 
 handler_stdout = logging.StreamHandler(stream=sys.stdout)
 handler_stderr = logging.StreamHandler(stream=sys.stderr)
-handler_retweet_file = logging.FileHandler(os.getenv('RETWEET_LOG')
-handler_retweet_error_file = logging.FileHandler(os.getenv('RETWEET_ERROR_LOG')
+handler_retweet_file = logging.FileHandler(os.getenv('RETWEET_LOG'))
+handler_retweet_error_file = logging.FileHandler(os.getenv('RETWEET_ERROR_LOG'))
 
 handler_stdout.setFormatter(formatter)
 handler_stderr.setFormatter(formatter)

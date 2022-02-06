@@ -12,7 +12,7 @@ import sys
 
 from config import create_api
 from dotenv import load_dotenv
-load_env()
+load_dotenv()
 
 from logger import (
     # logger_stdout, # not using
