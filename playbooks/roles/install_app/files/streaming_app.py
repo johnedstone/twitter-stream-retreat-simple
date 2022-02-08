@@ -74,8 +74,8 @@ class IDPrinter(tweepy.Stream):
                 apps_own_retweet = True
             elif status.in_reply_to_status_id:
                 tweet_type = 'Reply'
-            elif status.is_quote_status and is_retweet and \
-                    status.retweeted_status.user.id in tweet_status_user_ids_to_retweet:
+            elif status.is_quote_status and \
+                    status.quoted_status.user.id in tweet_status_user_ids_to_retweet:
                 tweet_type = 'Quote, already retweeted'  # this "is_retweet" may be redundant as perhaps a quote is always a retweet
             elif status.is_quote_status:
                 tweet_type = 'Quote'
