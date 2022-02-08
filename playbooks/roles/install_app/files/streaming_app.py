@@ -68,15 +68,19 @@ class IDPrinter(tweepy.Stream):
             retweet = False
             tweet_type = None
             apps_own_retweet = False
+            is_retweet = hasattr(status, 'retweeted_status')
 
             if status.user.id == credentials.id:
                 apps_own_retweet = True
             elif status.in_reply_to_status_id:
                 tweet_type = 'Reply'
+            elif status.is_quote_status and is_retweet and \
+                    status.retweeted_status.user.id in tweet_status_user_ids_to_retweet:
+                tweet_type = 'Already retweeted'  # this "is_retweet" may be redundant as perhaps a quote is always a retweet
             elif status.is_quote_status:
                 tweet_type = 'Quote'
                 retweet = True
-            elif hasattr(status, 'retweeted_status'):
+            elif is_retweet:
                 if status.user.id in retweet_exemptions:
                     retweet = True
                     tweet_type = 'Exempted retweet'
@@ -114,11 +118,7 @@ def main():
     
     except Exception as e:
         logger_stderr.error('Stream error - {} - {}'.format(type(e).__name__, e))
-        logger_stderr.error('{} - {} - Already retweeted : {} - {}'.format(status.user.screen_name, tweet_type, retweet, status.text))
-
         logger_retweet_error_file.error('Stream error - {} - {}'.format(type(e).__name__, e))
-        logger_retweet_error_file.error('{} - {} - Already retweeted : {} - {}'.format(status.user.screen_name, tweet_type, retweet, status.text))
-        logger_retweet_error_file.error('{}'.format(status))
 
 if __name__ == '__main__':
     try:    
