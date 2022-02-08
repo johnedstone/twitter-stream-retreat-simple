@@ -99,7 +99,7 @@ class IDPrinter(tweepy.Stream):
 
         finally:
             if not apps_own_retweet:
-                logger_retweet_file.info('{} - {} - Retweeted: {} - {}'.format(status.user.screen_name, tweet_type, retweet, status.text))
+                logger_retweet_file.info('{} - {} - Retweeted: {} - {} - Quote: {} - Retweet: {}'.format(status.user.screen_name, tweet_type, retweet, status.text, status.is_quote_status, is_retweet))
 
 def main():
     try:
