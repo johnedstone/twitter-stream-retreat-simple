@@ -12,10 +12,12 @@ import sys
 
 from config import create_api
 from dotenv import load_dotenv
+from get_user_screen_name import get_screen_name
+
 load_dotenv()
 
 from logger import (
-    # logger_stdout, # not using
+    logger_stdout,
     logger_stderr,
     logger_retweet_file,
     logger_retweet_error_file
@@ -29,33 +31,54 @@ consumer_secret = os.getenv('API_KEY_SECRET')
 access_token = os.getenv('ACCESS_TOKEN')
 access_token_secret = os.getenv('ACCESS_TOKEN_SECRET')
 
-twitter_ids_list = []
-twitter_ids = os.getenv('TWEET_STATUS_USER_IDS_TO_RETWEET')
-if twitter_ids:
-    twitter_ids_list = [int(ea) for ea in twitter_ids.split(',')] #, 38531358]
-tweet_status_user_ids_to_retweet = twitter_ids_list
+ids_to_follow_list = []
+ids_to_follow = os.getenv('IDS_TO_FOLLOW')
+if ids_to_follow:
+    ids_to_follow_list = [int(ea) for ea in ids_to_follow.split(',')] #, 38531358]
 
-exemptions_list = []
-exemptions = os.getenv('RETWEET_EXEMPTIONS')
-if exemptions:
-    exemptions_list = [int(ea) for ea in exemptions.split(',')]
-retweet_exemptions = exemptions_list
+ids_to_publish_only_tweets_list = []
+ids_to_publish_only_tweets = os.getenv('IDS_TO_PUBLISH_ONLY_TWEETS')
+if ids_to_publish_only_tweets:
+    ids_to_publish_only_tweets_list = [int(ea) for ea in ids_to_publish_only_tweets.split(',')]
 
-def check_twitter_ids():
-    if not tweet_status_user_ids_to_retweet:
-        logger_stderr.error('Fatal: No twitter accounts to follow!  Yikes!!!')
-        logger_retweet_error_file.error('Fatal: No twitter accounts to follow!  Yikes')
+ids_to_publish_tweets_and_quotes_list = []
+ids_to_publish_tweets_and_quotes = os.getenv('IDS_TO_PUBLISH_TWEETS_AND_QUOTES')
+if ids_to_publish_tweets_and_quotes:
+    ids_to_publish_tweets_and_quotes_list = [int(ea) for ea in ids_to_publish_tweets_and_quotes.split(',')]
+
+def check_ids_to_follow():
+    if not ids_to_follow_list:
+        logger_stderr.error('Fatal: No user accounts to follow!  Yikes!!!')
+        logger_retweet_error_file.error('Fatal: No user accounts to follow!  Yikes')
         raise SystemExit
     else:
-        logger_retweet_file.info('Current status.user.ids following: {}'.format(tweet_status_user_ids_to_retweet))
-        logger_retweet_error_file.warning('Current status.user.ids following: {}'.format(tweet_status_user_ids_to_retweet))
+        msg = f'''{"Following:":40}{[get_screen_name(ea) for ea in ids_to_follow_list]}'''
+        logger_retweet_file.info(msg)
+        logger_retweet_error_file.warning(msg)
+        logger_stdout.info(msg)
+
+        msg = f'''{"Retweeting only tweets:":40}{[get_screen_name(ea) for ea in ids_to_publish_only_tweets_list]}'''
+        logger_retweet_file.info(msg)
+        logger_retweet_error_file.warning(msg)
+        logger_stdout.info(msg)
+
+        msg = f'''{"Retweeting tweets and quotes:":40}{[get_screen_name(ea) for ea in ids_to_publish_tweets_and_quotes_list]}'''
+        logger_retweet_file.info(msg)
+        logger_retweet_error_file.warning(msg)
+        logger_stdout.info(msg)
+
+        not_restricted_ids = ids_to_follow_list
+        for ea in ids_to_publish_only_tweets_list:
+            not_restricted_ids.remove(ea)
+
+        for ea in ids_to_publish_tweets_and_quotes_list:
+            not_restricted_ids.remove(ea)
+
+        msg = f'''{"Retweeting tweets, quotes and replies:":40}{[get_screen_name(ea) for ea in not_restricted_ids]}'''
+        logger_retweet_file.info(msg)
+        logger_retweet_error_file.warning(msg)
+        logger_stdout.info(msg)
     
-    if not retweet_exemptions:
-        logger_stderr.warning('Warning: No retweet exemptions.  Are you okay with this?')
-        logger_retweet_error_file.warning('Warning: No retweet exemptions.  Are you okay with this?')
-    else:
-        logger_retweet_file.info('Current retweet_exemptions: {}'.format(retweet_exemptions))
-        logger_retweet_error_file.warning('Current retweet_exemptions: {}'.format(retweet_exemptions))
 
 # Subclass Stream to print IDs of Tweets received
 class IDPrinter(tweepy.Stream):
@@ -65,32 +88,37 @@ class IDPrinter(tweepy.Stream):
         https://developer.twitter.com/en/docs/twitter-api/v1/data-dictionary/object-model/tweet
         """
         try:
-            retweet = False
+            publish = False
+            log_msg = ''
             tweet_type = None
-            apps_own_retweet = False
             is_retweet = hasattr(status, 'retweeted_status')
+            is_quote = status.is_quote_status
 
             if status.user.id == credentials.id:
-                apps_own_retweet = True
-            elif status.in_reply_to_status_id:
-                tweet_type = 'Reply'
-            elif status.is_quote_status and \
-                    status.quoted_status.user.id in tweet_status_user_ids_to_retweet:
-                tweet_type = 'Quote, already retweeted'  # this "is_retweet" may be redundant as perhaps a quote is always a retweet
-            elif status.is_quote_status:
-                tweet_type = 'Quote'
-                retweet = True
-            elif is_retweet:
-                if status.user.id in retweet_exemptions:
-                    retweet = True
-                    tweet_type = 'Exempted retweet'
-                else:
-                    tweet_type = 'Retweet'
-            else:
-                tweet_type = 'Tweet'
-                retweet = True
+                tweet_type = 'Apps own retweet'
 
-            if retweet:
+            if status.in_reply_to_status_id:
+                tweet_type = 'Reply'
+
+            if not is_retweet and not is_quote:
+                publish = True
+                log_msg = 'Simple Tweet'
+
+            if not is_retweet and is_quote:
+                log_msg = 'Simple Quote'
+                if status.user.id not in ids_to_publish_only_tweet_list:
+                    publish = True
+
+            if is_retweet:
+                log_msg = 'Retweet'
+                if is_quote:
+                    log_msg = log_msg + ' with Quote'
+
+                if status.user.id not in ids_to_publish_only_tweets_list:
+                    if status.user.id not in ids_to_publish_tweets_and_quotes_list:
+                        publish = True
+
+            if publish:
                 r = api.retweet(status.id)
 
         except Exception as e:
@@ -98,8 +126,13 @@ class IDPrinter(tweepy.Stream):
             logger_retweet_error_file.warning('IDPrinter error - {} - {}'.format(type(e).__name__, e))
 
         finally:
-            if not apps_own_retweet:
-                logger_retweet_file.info('{} - {} - Retweeted: {} - {} - Quote: {} - Retweet: {}'.format(status.user.screen_name, tweet_type, retweet, status.text, status.is_quote_status, is_retweet))
+            if log_msg:
+                msg = f'' \
+                      f'Published: {publish} - ' \
+                      f'Tweet Type: {tweet_type:20} - ' \
+                      f'{status.user.screen.name:12} - ' \
+                      f''
+                logger_retweet_file.info(msg)
 
 def main():
     try:
@@ -107,14 +140,14 @@ def main():
         logger_stderr.warning('Starting tweepy.Stream')
         logger_retweet_error_file.warning('Starting tweepy.Stream')
 
-        check_twitter_ids()
+        check_ids_to_follow()
 
         printer = IDPrinter(
           consumer_key, consumer_secret,
           access_token, access_token_secret,
         )
         
-        printer.filter(follow=tweet_status_user_ids_to_retweet)
+        printer.filter(follow=ids_to_follow_list)
     
     except Exception as e:
         logger_stderr.error('Stream error - {} - {}'.format(type(e).__name__, e))
