@@ -89,10 +89,12 @@ class IDPrinter(tweepy.Stream):
         """
         try:
             publish = False
-            log_msg = ''
+            log_msg = True
             tweet_type = None
             is_retweet = hasattr(status, 'retweeted_status')
             is_quote = status.is_quote_status
+
+            logger_retweet_file.info(f'tweet id: {status.id}')
 
             if status.user.id == credentials.id:
                 tweet_type = 'Apps own retweet'
@@ -102,17 +104,17 @@ class IDPrinter(tweepy.Stream):
 
             if not is_retweet and not is_quote:
                 publish = True
-                log_msg = 'Simple Tweet'
+                tweet_type = 'Simple Tweet'
 
             if not is_retweet and is_quote:
-                log_msg = 'Simple Quote'
+                tweet_type = 'Simple Quote'
                 if status.user.id not in ids_to_publish_only_tweet_list:
                     publish = True
 
             if is_retweet:
-                log_msg = 'Retweet'
+                tweet_type = 'Retweet'
                 if is_quote:
-                    log_msg = log_msg + ' with Quote'
+                    tweet_type = tweet_type + ' with Quote'
 
                 if status.user.id not in ids_to_publish_only_tweets_list:
                     if status.user.id not in ids_to_publish_tweets_and_quotes_list:
@@ -131,6 +133,7 @@ class IDPrinter(tweepy.Stream):
                       f'Published: {publish} - ' \
                       f'Tweet Type: {tweet_type:20} - ' \
                       f'''{status.user.screen.name:12} - ''' \
+                      f'''{status.id:12} - ''' \
                       f'''{status.text}''' \
                       f''
                 logger_retweet_file.info(msg)
