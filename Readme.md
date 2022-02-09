@@ -15,6 +15,19 @@ The files that this ansible playbook installs
 that comprise the streaming app can be found in
 [playbooks/roles/install_app/files](https://github.com/johnedstone/twitter-stream-retreat-simple/tree/main/playbooks/roles/install_app/files)
 
+### Notes on Twitter identifiers
+* Retweet: If a user retweets a quote, it is identified as a __retweet and a quote__
+(`hasattr(status, 'retweeted_status'`)
+[reference](https://developer.twitter.com/en/docs/twitter-api/v1/data-dictionary/object-model/tweet)
+* Quote: if a user quotes a retweet, it is identified as a __quote__ but not a __retweet__
+* There are four possibilities:
+```
+hasattr(status, 'retweeted_status') == False and status.is_quote_status = False # Simple tweet, not a retweet, not a quote
+hasattr(status, 'retweeted_status') == False and status.is_quote_status = True  # User has selected 'Quote' not 'Retweet'
+hasattr(status, 'retweeted_status') == True and status.is_quote_status = False  # User has selected 'Retweet' not 'Quote', and the retweet is not a Quote
+hasattr(status, 'retweeted_status') == True and status.is_quote_status = True  # User has selected 'Retweet' not 'Quote', and the retweet is a Quote
+```
+
 <!--
 # vim: ai et ts=4 sw=4 sts=4 nu
 -->
