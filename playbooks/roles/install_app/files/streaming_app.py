@@ -130,7 +130,8 @@ class IDPrinter(tweepy.Stream):
                 msg = f'' \
                       f'Published: {publish} - ' \
                       f'Tweet Type: {tweet_type:20} - ' \
-                      f'{status.user.screen.name:12} - ' \
+                      f'''{status.user.screen.name:12} - ''' \
+                      f'''{status.text}''' \
                       f''
                 logger_retweet_file.info(msg)
 
