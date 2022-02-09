@@ -74,7 +74,7 @@ def check_ids_to_follow():
         for ea in ids_to_publish_tweets_and_quotes_list:
             not_restricted_ids.remove(ea)
 
-        msg = f'''{"Retweeting tweets, quotes and replies:":40}{[get_screen_name(ea) for ea in not_restricted_ids]}'''
+        msg = f'''{"Retweeting tweets, quotes and retweets:":40}{[get_screen_name(ea) for ea in not_restricted_ids]}'''
         logger_retweet_file.info(msg)
         logger_retweet_error_file.warning(msg)
         logger_stdout.info(msg)
