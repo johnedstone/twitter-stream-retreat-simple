@@ -30,11 +30,12 @@ consumer_key = os.getenv('API_KEY')
 consumer_secret = os.getenv('API_KEY_SECRET')
 access_token = os.getenv('ACCESS_TOKEN')
 access_token_secret = os.getenv('ACCESS_TOKEN_SECRET')
+include_replys_and_self_retweets_in_log = os.getenv('INCLUDE_REPLYS_AND_SELF_RETWEETS_IN_LOG')
 
 ids_to_follow_list = []
 ids_to_follow = os.getenv('IDS_TO_FOLLOW')
 if ids_to_follow:
-    ids_to_follow_list = [int(ea) for ea in ids_to_follow.split(',')] #, 38531358]
+    ids_to_follow_list = [int(ea) for ea in ids_to_follow.split(',')]
 
 ids_to_publish_only_tweets_list = []
 ids_to_publish_only_tweets = os.getenv('IDS_TO_PUBLISH_ONLY_TWEETS')
@@ -67,7 +68,7 @@ def check_ids_to_follow():
         logger_retweet_error_file.warning(msg)
         logger_stdout.info(msg)
 
-        not_restricted_ids = ids_to_follow_list
+        not_restricted_ids = [ea for ea in ids_to_follow_list]
         for ea in ids_to_publish_only_tweets_list:
             not_restricted_ids.remove(ea)
 
@@ -94,31 +95,40 @@ class IDPrinter(tweepy.Stream):
             is_retweet = hasattr(status, 'retweeted_status')
             is_quote = status.is_quote_status
 
-            logger_retweet_file.info(f'tweet id: {status.id}')
 
             if status.user.id == credentials.id:
                 tweet_type = 'Apps own retweet'
-
-            if status.in_reply_to_status_id:
+                log_msg = include_replys_and_self_retweets_in_log
+            elif status.in_reply_to_status_id:
                 tweet_type = 'Reply'
-
-            if not is_retweet and not is_quote:
+                log_msg = include_replys_and_self_retweets_in_log
+            elif not is_retweet and not is_quote:
                 publish = True
                 tweet_type = 'Simple Tweet'
-
-            if not is_retweet and is_quote:
+            elif not is_retweet and is_quote:
                 tweet_type = 'Simple Quote'
-                if status.user.id not in ids_to_publish_only_tweet_list:
-                    publish = True
-
-            if is_retweet:
+                if status.user.id not in ids_to_publish_only_tweets_list:
+                    if status.quoted_status.user.id not in ids_to_follow_list: # as this should have been published already
+                        publish = True
+                    else:
+                        tweet_type = tweet_type + ' should have been retweeted already'
+                        #logger_stderr.warning(f'What #2 - {status.user.id}')
+                        #logger_stderr.warning(f'What #2 - {ids_to_follow_list}')
+                        #logger_stderr.warning(f'What #2 - {status.quoted_status.user.id}')
+            elif is_retweet:
                 tweet_type = 'Retweet'
                 if is_quote:
                     tweet_type = tweet_type + ' with Quote'
 
-                if status.user.id not in ids_to_publish_only_tweets_list:
-                    if status.user.id not in ids_to_publish_tweets_and_quotes_list:
-                        publish = True
+                if status.user.id not in ids_to_publish_only_tweets_list: # that is, status.id is allowed to retweet
+                    if status.user.id not in ids_to_publish_tweets_and_quotes_list: # that is, status.id is allowed to retweet
+                        if status.retweeted_status.user.id not in ids_to_follow_list: # as this should have been published already
+                            publish = True
+                            if is_quote and status.quoted_status.user.id in ids_to_follow_list: # if there is a quote in the retweet, this should have been published already
+                                publish = False
+                                tweet_type = tweet_type + ' should have been retweeted already'
+                        else:
+                            tweet_type = tweet_type + ' should have been retweeted already'
 
             if publish:
                 r = api.retweet(status.id)
@@ -130,9 +140,9 @@ class IDPrinter(tweepy.Stream):
         finally:
             if log_msg:
                 msg = f'' \
-                      f'Published: {publish} - ' \
-                      f'Tweet Type: {tweet_type:20} - ' \
-                      f'''{status.user.screen.name:12} - ''' \
+                      f'Published: {str(publish):5} - ' \
+                      f'{tweet_type:20} - ' \
+                      f'''{status.user.screen_name:12} - ''' \
                       f'''{status.id:12} - ''' \
                       f'''{status.text}''' \
                       f''
