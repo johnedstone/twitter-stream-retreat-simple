@@ -21,7 +21,8 @@ logger_retweet_file.setLevel(logging.INFO)
 logger_retweet_error_file.setLevel(logging.WARNING)
 
 # formatter = logging.Formatter(fmt="%(asctime)s [%(levelname)s]: %(message)s in %(pathname)s:%(lineno)d")
-formatter = logging.Formatter(fmt="%(asctime)s [%(levelname)s]: %(message)s :%(lineno)d")
+# formatter = logging.Formatter(fmt="%(asctime)s [%(levelname)s]: %(message)s :%(lineno)d")
+formatter = logging.Formatter(fmt="%(asctime)s [%(levelname)s]: %(message)s")
 
 handler_stdout = logging.StreamHandler(stream=sys.stdout)
 handler_stderr = logging.StreamHandler(stream=sys.stderr)

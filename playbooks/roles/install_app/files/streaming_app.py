@@ -98,10 +98,10 @@ class IDPrinter(tweepy.Stream):
 
             if status.user.id == credentials.id:
                 tweet_type = 'Apps own retweet'
-                log_msg = include_replys_and_self_retweets_in_log
+                log_msg = include_replys_and_self_retweets_in_log == "yes"
             elif status.in_reply_to_status_id:
                 tweet_type = 'Reply'
-                log_msg = include_replys_and_self_retweets_in_log
+                log_msg = include_replys_and_self_retweets_in_log == "yes"
             elif not is_retweet and not is_quote:
                 publish = True
                 tweet_type = 'Simple Tweet'

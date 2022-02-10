@@ -28,6 +28,6 @@ IDS_TO_FOLLOW: 'user.id #1,user.id #2,user.id #3, user.id #4' # all ids go here
 IDS_TO_PUBLISH_ONLY_TWEETS: 'user.id #1,user.id #2' # no Quotes, no Retweets
 IDS_TO_PUBLISH_TWEETS_AND_QUOTES: 'user.id #3' # No Retweets
 
-INCLUDE_REPLYS_AND_SELF_RETWEETS_IN_LOG: True
+INCLUDE_REPLYS_AND_SELF_RETWEETS_IN_LOG: "no" # string: "yes" or "no"
 
 # vim: ai et ts=2 sw=2 sts=2 nu
