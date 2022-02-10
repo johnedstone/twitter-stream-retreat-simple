@@ -24,9 +24,17 @@ ACCESS_TOKEN: 'access_token'
 ACCESS_TOKEN_SECRET: 'access_token_secret'
 BEARER_TOKEN: 'bearer_token'
 
+### All of these will have their Tweets retweeted ("published" by this app)
 IDS_TO_FOLLOW: 'user.id #1,user.id #2,user.id #3, user.id #4' # all ids go here
+
+### These will not have their Quotes nor their Retweets retweeted, only their Tweets ("published" by this app)
 IDS_TO_PUBLISH_ONLY_TWEETS: 'user.id #1,user.id #2' # no Quotes, no Retweets
+
+### These will have their Tweets and Quotes retweeted, but not their Retweets ("published" by this app)
 IDS_TO_PUBLISH_TWEETS_AND_QUOTES: 'user.id #3' # No Retweets
+
+### Those "IDS_TO_FOLLOW" not mentioned in the above two variables will
+### have their Tweets, their Quotes, and their Retweets retweeted ("published" by this app)
 
 INCLUDE_REPLYS_AND_SELF_RETWEETS_IN_LOG: "no" # string: "yes" or "no"
 
