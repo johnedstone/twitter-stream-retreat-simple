@@ -121,7 +121,7 @@ class IDPrinter(tweepy.Stream):
                     tweet_type = tweet_type + ' with Quote'
 
                 if status.user.id not in ids_to_follow_list:
-                    tweet_type = tweet_type + ' person who retweeted is not an account being followed' # perhaps part of the retweet counter
+                    tweet_type = tweet_type + ' not an account being followed' # perhaps part of the retweet counter
                 # else check permissions
                 elif status.user.id not in ids_to_publish_only_tweets_list: # that is, status.id is allowed to retweet
                     if status.user.id not in ids_to_publish_tweets_and_quotes_list: # that is, status.id is allowed to retweet
