@@ -27,6 +27,7 @@ hasattr(status, 'retweeted_status') == False and status.is_quote_status = True  
 hasattr(status, 'retweeted_status') == True and status.is_quote_status = False  # User has selected to 'Retweet' not 'Quote' a tweet, and the tweet is not a Quote
 hasattr(status, 'retweeted_status') == True and status.is_quote_status = True   # User has selected to 'Retweet' not 'Quote' a tweet, and the tweet is a Quote
 ```
+* When a third party retweets a tweet of an account that this app is following, `Stream.filter(follow=ids_to_follow_list)`, this app "sees" this retweet, even though it is not a retweet of the account itself.  This app identifies this case and does not retweet it 
 
 <!--
 # vim: ai et ts=4 sw=4 sts=4 nu
