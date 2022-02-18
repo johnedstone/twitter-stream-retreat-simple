@@ -29,6 +29,8 @@ hasattr(status, 'retweeted_status') == True and status.is_quote_status = True   
 ```
 * When a third party retweets a tweet of an account that this app is following, `Stream.filter(follow=ids_to_follow_list)`, this app "sees" this retweet, even though it is not a retweet of the account itself.  This app identifies this case and does not retweet it 
 
+### Notes on systemd
+* [For `systemctl --user`, not implemented here, see this reference](https://github.com/torfsen/python-systemd-tutorial)
 <!--
 # vim: ai et ts=4 sw=4 sts=4 nu
 -->
