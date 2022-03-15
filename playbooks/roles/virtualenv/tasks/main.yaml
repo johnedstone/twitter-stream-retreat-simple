@@ -20,5 +20,6 @@
     requirements: "/opt/apps/{{ app_name }}/requirements.txt"
     virtualenv: "/opt/apps/{{ app_name }}/venv"
     virtualenv_command: /usr/bin/virtualenv # python 3
+  when: not ansible_check_mode
 
 # vim: ai et ts=2 sts=2 sw=2 nu
