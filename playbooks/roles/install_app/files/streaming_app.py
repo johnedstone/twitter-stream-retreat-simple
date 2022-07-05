@@ -104,7 +104,7 @@ class IDPrinter(tweepy.Stream):
                 log_msg = include_replys_and_self_retweets_in_log == "yes"
             elif not is_retweet and not is_quote:
                 tweet_type = 'Simple Tweet'
-                if status.user.id in ids_to_follow_list:
+                if status.user.id in ids_to_follow_list: # added 05-Jul-2022 otherwise any @user_following will be published, yikes!
                     publish = True
             elif not is_retweet and is_quote:
                 tweet_type = 'Simple Quote'
