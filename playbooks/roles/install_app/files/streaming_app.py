@@ -108,6 +108,10 @@ class IDPrinter(tweepy.Stream):
                     publish = True
             elif not is_retweet and is_quote:
                 tweet_type = 'Simple Quote'
+                """
+                # This block allowed someone we are not following, to quote someone we are
+                # Removing 16-Sep-2022
+                # See above 05-Jul-2022 comment where this was starting to be fixed
                 if status.user.id not in ids_to_publish_only_tweets_list:
                     if status.quoted_status.user.id not in ids_to_follow_list: # as this should have been published already
                         publish = True
@@ -116,6 +120,7 @@ class IDPrinter(tweepy.Stream):
                         #logger_stderr.warning(f'What #2 - {status.user.id}')
                         #logger_stderr.warning(f'What #2 - {ids_to_follow_list}')
                         #logger_stderr.warning(f'What #2 - {status.quoted_status.user.id}')
+                """
             elif is_retweet:
                 tweet_type = 'Retweet'
                 if is_quote:
