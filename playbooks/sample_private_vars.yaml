@@ -39,4 +39,6 @@ IDS_TO_PUBLISH_TWEETS_AND_QUOTES: 'user.id_#3'
 
 INCLUDE_REPLYS_AND_SELF_RETWEETS_IN_LOG: "no" # string: "yes" or "no"
 
+Publish_Live: 'no'
+
 # vim: ai et ts=2 sw=2 sts=2 nu

@@ -31,6 +31,7 @@ consumer_secret = os.getenv('API_KEY_SECRET')
 access_token = os.getenv('ACCESS_TOKEN')
 access_token_secret = os.getenv('ACCESS_TOKEN_SECRET')
 include_replys_and_self_retweets_in_log = os.getenv('INCLUDE_REPLYS_AND_SELF_RETWEETS_IN_LOG')
+Publish_Live = os.getenv('Publish_Live', 'no') == 'yes'
 
 ids_to_follow_list = []
 ids_to_follow = os.getenv('IDS_TO_FOLLOW')
@@ -99,19 +100,16 @@ class IDPrinter(tweepy.Stream):
             if status.user.id == credentials.id:
                 tweet_type = 'Apps own retweet'
                 log_msg = include_replys_and_self_retweets_in_log == "yes"
+            elif status.user.id not in ids_to_follow_list:
+                tweet_type = 'status.user.id not in ids_to_follow_list: not an account being followed'
             elif status.in_reply_to_status_id:
                 tweet_type = 'Reply'
                 log_msg = include_replys_and_self_retweets_in_log == "yes"
             elif not is_retweet and not is_quote:
                 tweet_type = 'Simple Tweet'
-                if status.user.id in ids_to_follow_list: # added 05-Jul-2022 otherwise any @user_following will be published, yikes!
-                    publish = True
+                publish = True
             elif not is_retweet and is_quote:
                 tweet_type = 'Simple Quote'
-                """
-                # This block allowed someone we are not following, to quote someone we are
-                # Removing 16-Sep-2022
-                # See above 05-Jul-2022 comment where this was starting to be fixed
                 if status.user.id not in ids_to_publish_only_tweets_list:
                     if status.quoted_status.user.id not in ids_to_follow_list: # as this should have been published already
                         publish = True
@@ -120,14 +118,10 @@ class IDPrinter(tweepy.Stream):
                         #logger_stderr.warning(f'What #2 - {status.user.id}')
                         #logger_stderr.warning(f'What #2 - {ids_to_follow_list}')
                         #logger_stderr.warning(f'What #2 - {status.quoted_status.user.id}')
-                """
             elif is_retweet:
                 tweet_type = 'Retweet'
                 if is_quote:
                     tweet_type = tweet_type + ' with Quote'
-
-                if status.user.id not in ids_to_follow_list:
-                    tweet_type = tweet_type + ' not an account being followed' # perhaps part of the retweet counter
                 # else check permissions
                 elif status.user.id not in ids_to_publish_only_tweets_list: # that is, status.id is allowed to retweet
                     if status.user.id not in ids_to_publish_tweets_and_quotes_list: # that is, status.id is allowed to retweet
@@ -140,7 +134,8 @@ class IDPrinter(tweepy.Stream):
                             tweet_type = tweet_type + ' should have been retweeted already'
 
             if publish:
-                r = api.retweet(status.id)
+                if Publish_Live:
+                    r = api.retweet(status.id)
 
         except Exception as e:
             logger_stderr.warning('IDPrinter error - {} - {}'.format(type(e).__name__, e))
@@ -149,10 +144,11 @@ class IDPrinter(tweepy.Stream):
         finally:
             if log_msg:
                 msg = f'' \
-                      f'Published: {str(publish):5} - ' \
-                      f'{tweet_type:20} - ' \
-                      f'''{status.user.screen_name:12} - ''' \
-                      f'''{status.id:12} - ''' \
+                      f'Publish_Live: {str(Publish_Live):5} | ' \
+                      f'Published: {str(publish):5} | ' \
+                      f'{tweet_type:20} | ' \
+                      f'''{status.user.screen_name:12} | ''' \
+                      f'''{status.id:12} | ''' \
                       f'''{status.text}''' \
                       f''
                 logger_retweet_file.info(msg)
