@@ -92,7 +92,7 @@ class IDPrinter(tweepy.Stream):
         try:
             publish = False
             log_msg = True
-            tweet_type = None
+            tweet_type = 'Unknown'
             is_retweet = hasattr(status, 'retweeted_status')
             is_quote = status.is_quote_status
 
