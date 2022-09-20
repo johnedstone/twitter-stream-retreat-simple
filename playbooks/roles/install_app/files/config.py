@@ -10,12 +10,12 @@ load_dotenv()
 
 logger = logging.getLogger()
 
-def create_api():
-    consumer_key = os.getenv("API_KEY")
-    consumer_secret = os.getenv("API_KEY_SECRET")
-    access_token = os.getenv("ACCESS_TOKEN")
-    access_token_secret = os.getenv("ACCESS_TOKEN_SECRET")
+consumer_key = os.getenv("API_KEY")
+consumer_secret = os.getenv("API_KEY_SECRET")
+access_token = os.getenv("ACCESS_TOKEN")
+access_token_secret = os.getenv("ACCESS_TOKEN_SECRET")
 
+def create_api(): # API v1.1
     auth = tweepy.OAuth1UserHandler(
         consumer_key,
         consumer_secret,
@@ -31,5 +31,21 @@ def create_api():
         raise e
     logger.info("API created")
     return api
+
+def create_client(): # API v2
+    try:
+        client = tweepy.Client(
+            consumer_key,
+            consumer_secret,
+            access_token,
+            access_token,
+            wait_on_rate_limit=True)
+
+        logger.info("API created")
+
+        return client
+    except Exception as e:
+        logger.error("Error creating CLIENT", exc_info=True)
+        raise SystemExit(f'{e}')
 
 # vim: ai et ts=4 sts=4 sw=4 nu

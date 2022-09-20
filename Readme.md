@@ -16,7 +16,10 @@ The files that this ansible playbook installs
 that comprise the streaming app can be found in
 [playbooks/roles/install_app/files/streaming_app.py](https://github.com/johnedstone/twitter-stream-retreat-simple/tree/main/playbooks/roles/install_app/files)
 
-### Notes on Twitter identifiers
+### Notes on Twitter identifiers API v2
+* currently migrating this app to API v2
+
+### Notes on Twitter identifiers API v1.1
 * Retweet: If a user retweets a Quote, it is identified as a __retweet and a quote__
 [reference](https://developer.twitter.com/en/docs/twitter-api/v1/data-dictionary/object-model/tweet)
 * Quote: if a user quotes a tweet, it is identified as a __quote__ but not a __retweet__
