@@ -17,10 +17,12 @@ access_token_secret = os.getenv("ACCESS_TOKEN_SECRET")
 
 def create_api(): # API v1.1
     auth = tweepy.OAuth1UserHandler(
-        consumer_key,
-        consumer_secret,
-        access_token,
-        access_token_secret)
+         consumer_key=consumer_key,
+         consumer_secret=consumer_secret,
+         access_token=access_token,
+         access_token_secret=access_token_secret,
+         wait_on_rate_limit=True)
+
 
     api = tweepy.API(auth, wait_on_rate_limit=True)
 
@@ -33,19 +35,15 @@ def create_api(): # API v1.1
     return api
 
 def create_client(): # API v2
-    try:
-        client = tweepy.Client(
-            consumer_key,
-            consumer_secret,
-            access_token,
-            access_token,
-            wait_on_rate_limit=True)
+    client = tweepy.Client(
+        consumer_key=consumer_key,
+        consumer_secret=consumer_secret,
+        access_token=access_token,
+        access_token_secret=access_token_secret,
+        wait_on_rate_limit=True)
 
-        logger.info("API created")
+    logger.info("API created")
 
-        return client
-    except Exception as e:
-        logger.error("Error creating CLIENT", exc_info=True)
-        raise SystemExit(f'{e}')
+    return client
 
 # vim: ai et ts=4 sts=4 sw=4 nu
