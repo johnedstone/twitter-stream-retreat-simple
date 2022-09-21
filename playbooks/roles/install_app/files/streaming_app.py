@@ -154,7 +154,7 @@ class CustomStreamingClient(tweepy.StreamingClient):
 ####                logger_stdout.info(msg)
 
 def get_stream_rules():
-    stream_rules = [tweepy.StreamRule(value=f'from: {ea}', tag=f'{ea}', id=f'{ea}') for ea in [3178625846,3405286579,360905439,294064450,305558315]]
+    stream_rules = [tweepy.StreamRule(value=f'from: {ea}', tag=f'{ea}', id=f'{ea}') for ea in ids_to_follow_list]
 
     return stream_rules
 
@@ -168,7 +168,10 @@ def main():
 
         streaming_client = CustomStreamingClient(bearer_token)
         streaming_client.add_rules(add=get_stream_rules())
-        logger_stdout.info(streaming_client.get_rules())
+        stream_rules = streaming_client.get_rules()
+        logger_stdout.info(f'stream_rules: {rules}')
+        ##logger_retweet_file.info(f'stream_rules: {rules}')
+        ##logger_retweet_error_file.warning(f'stream_rules: {rules}')
         streaming_client.filter()
 
     
