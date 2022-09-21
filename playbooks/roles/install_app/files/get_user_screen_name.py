@@ -3,7 +3,7 @@ import tweepy, os
 from dotenv import load_dotenv
 load_dotenv()
 
-def get_screen_name(user_id): # API v2
+def get_screen_name(user_id):  # API v2
     client = tweepy.Client(os.getenv('BEARER_TOKEN'))
     user = client.get_user(id=f'{user_id}')
 

@@ -218,7 +218,7 @@ def get_stream_rules():
 
     return stream_rules
 
-def main(return_client="no"):
+def main():
     try:
         # Initialize instance of the subclass
         ##logger_stderr.warning('Starting tweepy.Stream')
@@ -234,10 +234,7 @@ def main(return_client="no"):
             ##logger_stdout.info(f'stream_rules: {stream_rules}')
             logger_retweet_file.info(f'stream_rules: {stream_rules}')
 
-            if return_client == "yes":
-                return streaming_client
-            else:
-                streaming_client.filter(expansions=['author_id'])
+            streaming_client.filter(expansions=['author_id'])
     
     except KeyboardInterrupt:
         streaming_client.disconnect()
