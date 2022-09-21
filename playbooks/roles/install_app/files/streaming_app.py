@@ -55,22 +55,22 @@ known_users = {}
 def check_ids_to_follow():
     if not ids_to_follow_list:
         logger_stderr.error('Fatal: No user accounts to follow!  Yikes!!!')
-        ##logger_retweet_error_file.error('Fatal: No user accounts to follow!  Yikes')
+        logger_retweet_error_file.error('Fatal: No user accounts to follow!  Yikes')
         raise SystemExit
     else:
         msg = f'''{"Following:":40}{[get_screen_name(ea) for ea in ids_to_follow_list]}'''
-        ##logger_retweet_file.info(msg)
-        ##logger_retweet_error_file.warning(msg)
+        logger_retweet_file.info(msg)
+        logger_retweet_error_file.warning(msg)
         logger_stdout.info(msg)
 
         msg = f'''{"Retweeting only tweets:":40}{[get_screen_name(ea) for ea in ids_to_publish_only_tweets_list]}'''
-        ##logger_retweet_file.info(msg)
-        ##logger_retweet_error_file.warning(msg)
+        logger_retweet_file.info(msg)
+        logger_retweet_error_file.warning(msg)
         logger_stdout.info(msg)
 
         msg = f'''{"Retweeting tweets and quotes:":40}{[get_screen_name(ea) for ea in ids_to_publish_tweets_and_quotes_list]}'''
-        ##logger_retweet_file.info(msg)
-        ##logger_retweet_error_file.warning(msg)
+        logger_retweet_file.info(msg)
+        logger_retweet_error_file.warning(msg)
         logger_stdout.info(msg)
 
         not_restricted_ids = [ea for ea in ids_to_follow_list]
@@ -81,8 +81,8 @@ def check_ids_to_follow():
             not_restricted_ids.remove(ea)
 
         msg = f'''{"Retweeting tweets, quotes and retweets:":40}{[get_screen_name(ea) for ea in not_restricted_ids]}'''
-        ##logger_retweet_file.info(msg)
-        ##logger_retweet_error_file.warning(msg)
+        logger_retweet_file.info(msg)
+        logger_retweet_error_file.warning(msg)
         logger_stdout.info(msg)
     
 
@@ -95,6 +95,7 @@ class CustomStreamingClient(tweepy.StreamingClient):
 
     def on_connection_error(self):
         self.disconnect()
+        logger_retweet_error_file.warning("executing 'on_connection_error' disconnect")
 
     """ https://realpython.com/python-with-statement/#creating-custom-context-managers
         to perhaps avoid
@@ -102,33 +103,53 @@ class CustomStreamingClient(tweepy.StreamingClient):
         HTTP error response text: {"title":"ConnectionException","detail":"This stream is currently at the maximum allowed connection limit.","connection ...
     """
     def __enter__(self):
-        print("Entering the context...")
-        return "Hello Streaming Client!"
+        logger_stdout.info("Entering the streaming client context...")
+        logger_retweet_file.info("Entering the streaming client context...")
+        logger_retweet_error_file.warning("Entering the streaming client context...")
+
+        return self
 
     def __exit__(self, exc_type, exc_value, exc_tb):
         self.disconnect()
-        print("Leaving the Streaming client...")
-        print(exc_type, exc_value, exc_tb, sep="\n")
+
+        logger_stdout.info("Leaving the Streaming client...")
+        logger_retweet_file.info("Leaving the Streaming client...")
+        logger_retweet_error_file.warning("Leaving the Streaming client...")
+
+        logger_stdout.info(f'''{exc_type}
+        {exc_value}
+        {exc_tb}''')
+
+        logger_retweet_file.info(f'''{exc_type}
+        {exc_value}
+        {exc_tb}''')
+
+        logger_retweet_error_file.warning(f'''{exc_type}
+        {exc_value}
+        {exc_tb}''')
+
+
+        #print(exc_type, exc_value, exc_tb, sep="\n")
 
     def on_tweet(self, tweet):
         try:
             publish = False
             log_msg = True
             tweet_type = 'Unknown'
-            logger_stdout.info(f'{tweet.text}')
+            ##logger_stdout.info(f'{tweet.text}')
             logger_retweet_file.info(f'{tweet.text}')
 
-            logger_stdout.info(f'{tweet.author_id}')
+            ##logger_stdout.info(f'{tweet.author_id}')
             logger_retweet_file.info(f'{tweet.author_id}')
 
-            logger_stdout.info(f'Which user_id is this a reply: {tweet.in_reply_to_user_id}')
+            ##logger_stdout.info(f'Which user_id is this a reply: {tweet.in_reply_to_user_id}')
             logger_retweet_file.info(f'Which user_id is this a reply: {tweet.in_reply_to_user_id}')
 
 
             if not tweet.author_id in known_users:
                 known_users[tweet.author_id] = get_screen_name(tweet.author_id)
 
-            logger_stdout.info(known_users[tweet.author_id])
+            ##logger_stdout.info(known_users[tweet.author_id])
             logger_retweet_file.info(known_users[tweet.author_id])
 
 ####            is_retweet = hasattr(status, 'retweeted_status')
@@ -177,7 +198,7 @@ class CustomStreamingClient(tweepy.StreamingClient):
 ####
         except Exception as e:
             logger_stderr.warning('Custom Streaming Client error - {} - {}'.format(type(e).__name__, e))
-            logger_retweet_error_file.warning('IDPrinter error - {} - {}'.format(type(e).__name__, e))
+            logger_retweet_error_file.warning('Custom Streaming Client error - {} - {}'.format(type(e).__name__, e))
 ####
 ####        finally:
 ####            if log_msg:
@@ -200,21 +221,23 @@ def get_stream_rules():
 def main(return_client="no"):
     try:
         # Initialize instance of the subclass
-        logger_stderr.warning('Starting tweepy.Stream')
-        ##logger_retweet_error_file.warning('Starting tweepy.Stream')
+        ##logger_stderr.warning('Starting tweepy.Stream')
+        logger_retweet_file.warning('Starting tweepy.Stream')
+        logger_retweet_error_file.warning('Starting tweepy.Stream')
 
         check_ids_to_follow()
 
-        streaming_client = CustomStreamingClient(bearer_token)
-        streaming_client.add_rules(add=get_stream_rules())
-        stream_rules = streaming_client.get_rules()
-        logger_stdout.info(f'stream_rules: {stream_rules}')
-        logger_retweet_file.info(f'stream_rules: {stream_rules}')
-        logger_retweet_error_file.warning(f'stream_rules: {stream_rules}')
-        if return_client == "yes":
-            return streaming_client
-        streaming_client.filter(expansions=['author_id'])
+        with CustomStreamingClient(bearer_token) as streaming_client:
+            streaming_client.add_rules(add=get_stream_rules())
+            stream_rules = streaming_client.get_rules()
 
+            ##logger_stdout.info(f'stream_rules: {stream_rules}')
+            logger_retweet_file.info(f'stream_rules: {stream_rules}')
+
+            if return_client == "yes":
+                return streaming_client
+            else:
+                streaming_client.filter(expansions=['author_id'])
     
     except KeyboardInterrupt:
         streaming_client.disconnect()
@@ -230,6 +253,7 @@ def main(return_client="no"):
     finally:
         streaming_client.disconnect()
         logger_stderr.warning("""
+            Disconnecting streaming client!
         """)
         logger_retweet_error_file.warning(f'''Disconnecting streaming client ...''')
 
