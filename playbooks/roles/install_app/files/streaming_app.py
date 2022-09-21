@@ -24,14 +24,14 @@ from logger import (
     logger_retweet_error_file
 )
 
-client = create_client()
-#api = create_api()
-#credentials = api.verify_credentials()
+#client = create_client()
 
-consumer_key = os.getenv('API_KEY')
-consumer_secret = os.getenv('API_KEY_SECRET')
-access_token = os.getenv('ACCESS_TOKEN')
-access_token_secret = os.getenv('ACCESS_TOKEN_SECRET')
+#consumer_key = os.getenv('API_KEY')
+#consumer_secret = os.getenv('API_KEY_SECRET')
+#access_token = os.getenv('ACCESS_TOKEN')
+#access_token_secret = os.getenv('ACCESS_TOKEN_SECRET')
+bearer_token = os.getenv('BEARER_TOKEN')
+
 include_replys_and_self_retweets_in_log = os.getenv('INCLUDE_REPLYS_AND_SELF_RETWEETS_IN_LOG')
 Publish_Live = os.getenv('Publish_Live', 'no') == 'yes'
 
@@ -84,17 +84,14 @@ def check_ids_to_follow():
         logger_stdout.info(msg)
     
 
-# Subclass Stream to print IDs of Tweets received
-####class IDPrinter(tweepy.Stream):
-####
-####    def on_status(self, status):
-####        """
-####        https://developer.twitter.com/en/docs/twitter-api/v1/data-dictionary/object-model/tweet
-####        """
-####        try:
-####            publish = False
-####            log_msg = True
-####            tweet_type = 'Unknown'
+class CustomStreamingClient(tweepy.StreamingClient):
+
+    def on_tweet(self, tweet):
+        try:
+            publish = False
+            log_msg = True
+            tweet_type = 'Unknown'
+            logger_stdout.info(f'{tweet}')
 ####            is_retweet = hasattr(status, 'retweeted_status')
 ####            is_quote = status.is_quote_status
 ####
@@ -139,9 +136,9 @@ def check_ids_to_follow():
 ####                if Publish_Live:
 ####                    r = api.retweet(status.id)
 ####
-####        except Exception as e:
-####            logger_stderr.warning('IDPrinter error - {} - {}'.format(type(e).__name__, e))
-####            ##logger_retweet_error_file.warning('IDPrinter error - {} - {}'.format(type(e).__name__, e))
+        except Exception as e:
+            logger_stderr.warning('IDPrinter error - {} - {}'.format(type(e).__name__, e))
+            ##logger_retweet_error_file.warning('IDPrinter error - {} - {}'.format(type(e).__name__, e))
 ####
 ####        finally:
 ####            if log_msg:
@@ -155,7 +152,12 @@ def check_ids_to_follow():
 ####                      f''
 ####                ##logger_retweet_file.info(msg)
 ####                logger_stdout.info(msg)
-####
+
+def get_stream_rules():
+    stream_rules = [tweepy.StreamRule(value=f'from: {ea}', tag=f'{ea}', id=f'{ea}') for ea in [3178625846,3405286579,360905439,294064450,305558315]]
+
+    return stream_rules
+
 def main():
     try:
         # Initialize instance of the subclass
@@ -164,13 +166,12 @@ def main():
 
         check_ids_to_follow()
 
-####        printer = IDPrinter(
-####          consumer_key, consumer_secret,
-####          access_token, access_token_secret,
-####        )
-####        
-####        printer.filter(follow=ids_to_follow_list)
-####    
+        streaming_client = CustomStreamingClient(bearer_token)
+        streaming_client.add_rules(add=get_stream_rules())
+        logger_stdout.info(streaming_client.get_rules())
+        streaming_client.filter()
+
+    
     except Exception as e:
         logger_stderr.error('Stream error - {} - {}'.format(type(e).__name__, e))
         ##logger_retweet_error_file.error('Stream error - {} - {}'.format(type(e).__name__, e))
