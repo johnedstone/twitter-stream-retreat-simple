@@ -96,6 +96,20 @@ class CustomStreamingClient(tweepy.StreamingClient):
     def on_connection_error(self):
         self.disconnect()
 
+    """ https://realpython.com/python-with-statement/#creating-custom-context-managers
+        to perhaps avoid
+        Stream encountered HTTP error: 429
+        HTTP error response text: {"title":"ConnectionException","detail":"This stream is currently at the maximum allowed connection limit.","connection ...
+    """
+    def __enter__(self):
+        print("Entering the context...")
+        return "Hello Streaming Client!"
+
+    def __exit__(self, exc_type, exc_value, exc_tb):
+        self.disconnect()
+        print("Leaving the Streaming client...")
+        print(exc_type, exc_value, exc_tb, sep="\n")
+
     def on_tweet(self, tweet):
         try:
             publish = False
