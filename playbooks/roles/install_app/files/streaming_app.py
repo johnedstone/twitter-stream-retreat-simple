@@ -98,8 +98,17 @@ class CustomStreamingClient(tweepy.StreamingClient):
             log_msg = True
             tweet_type = 'Unknown'
             logger_stdout.info(f'{tweet.text}')
+            logger_retweet_file.info(f'{tweet.text}')
+            logger_retweet_error_file.warning(f'{tweet.text}')
+
             logger_stdout.info(f'{tweet.author_id}')
+            logger_retweet_file.info(f'{tweet.author_id}')
+            logger_retweet_error_file.warning(f'{tweet.author_id}')
+
             logger_stdout.info(f'Which user_id is this a reply: {tweet.in_reply_to_user_id}')
+            logger_retweet_file.info(f'Which user_id is this a reply: {tweet.in_reply_to_user_id}')
+            logger_retweet_error_file.warning(f'Which user_id is this a reply: {tweet.in_reply_to_user_id}')
+
 
             if not tweet.author_id in known_users:
                 known_users[tweet.author_id] = get_screen_name(tweet.author_id)
@@ -152,7 +161,7 @@ class CustomStreamingClient(tweepy.StreamingClient):
 ####
         except Exception as e:
             logger_stderr.warning('Custom Streaming Client error - {} - {}'.format(type(e).__name__, e))
-            ##logger_retweet_error_file.warning('IDPrinter error - {} - {}'.format(type(e).__name__, e))
+            logger_retweet_error_file.warning('IDPrinter error - {} - {}'.format(type(e).__name__, e))
 ####
 ####        finally:
 ####            if log_msg:
@@ -184,8 +193,8 @@ def main():
         streaming_client.add_rules(add=get_stream_rules())
         stream_rules = streaming_client.get_rules()
         logger_stdout.info(f'stream_rules: {stream_rules}')
-        ##logger_retweet_file.info(f'stream_rules: {stream_rules}')
-        ##logger_retweet_error_file.warning(f'stream_rules: {stream_rules}')
+        logger_retweet_file.info(f'stream_rules: {stream_rules}')
+        logger_retweet_error_file.warning(f'stream_rules: {stream_rules}')
         #return streaming_client
         streaming_client.filter(expansions=['author_id'])
 
@@ -193,11 +202,19 @@ def main():
     except KeyboardInterrupt:
         streaming_client.disconnect()
         logger_stderr.warning("""
-        Disconnecting streaming client and closing ...
+        Closing ...
+        """)
+        logger_stderr.warning("""
+        Disconnecting streaming client ...
         """)
     except Exception as e:
         logger_stderr.error('Stream error - {} - {}'.format(type(e).__name__, e))
-        ##logger_retweet_error_file.error('Stream error - {} - {}'.format(type(e).__name__, e))
+        logger_retweet_error_file.error('Stream error - {} - {}'.format(type(e).__name__, e))
+    finally:
+        streaming_client.disconnect()
+        logger_stderr.warning("""
+        """)
+        logger_retweet_error_file.warning(f'''Disconnecting streaming client ...''')
 
 if __name__ == '__main__':
     try:    
