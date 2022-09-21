@@ -92,6 +92,10 @@ class CustomStreamingClient(tweepy.StreamingClient):
     https://developer.twitter.com/en/docs/twitter-api/fields
     """
 
+
+    def on_connection_error(self):
+        self.disconnect()
+
     def on_tweet(self, tweet):
         try:
             publish = False
@@ -99,21 +103,19 @@ class CustomStreamingClient(tweepy.StreamingClient):
             tweet_type = 'Unknown'
             logger_stdout.info(f'{tweet.text}')
             logger_retweet_file.info(f'{tweet.text}')
-            logger_retweet_error_file.warning(f'{tweet.text}')
 
             logger_stdout.info(f'{tweet.author_id}')
             logger_retweet_file.info(f'{tweet.author_id}')
-            logger_retweet_error_file.warning(f'{tweet.author_id}')
 
             logger_stdout.info(f'Which user_id is this a reply: {tweet.in_reply_to_user_id}')
             logger_retweet_file.info(f'Which user_id is this a reply: {tweet.in_reply_to_user_id}')
-            logger_retweet_error_file.warning(f'Which user_id is this a reply: {tweet.in_reply_to_user_id}')
 
 
             if not tweet.author_id in known_users:
                 known_users[tweet.author_id] = get_screen_name(tweet.author_id)
 
             logger_stdout.info(known_users[tweet.author_id])
+            logger_retweet_file.info(known_users[tweet.author_id])
 
 ####            is_retweet = hasattr(status, 'retweeted_status')
 ####            is_quote = status.is_quote_status
@@ -181,7 +183,7 @@ def get_stream_rules():
 
     return stream_rules
 
-def main():
+def main(return_client="no"):
     try:
         # Initialize instance of the subclass
         logger_stderr.warning('Starting tweepy.Stream')
@@ -195,7 +197,8 @@ def main():
         logger_stdout.info(f'stream_rules: {stream_rules}')
         logger_retweet_file.info(f'stream_rules: {stream_rules}')
         logger_retweet_error_file.warning(f'stream_rules: {stream_rules}')
-        #return streaming_client
+        if return_client == "yes":
+            return streaming_client
         streaming_client.filter(expansions=['author_id'])
 
     
