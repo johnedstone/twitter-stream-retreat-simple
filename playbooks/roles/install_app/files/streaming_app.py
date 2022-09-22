@@ -92,45 +92,6 @@ class CustomStreamingClient(tweepy.StreamingClient):
     https://developer.twitter.com/en/docs/twitter-api/fields
     """
 
-
-    def on_connection_error(self):
-        self.disconnect()
-        logger_retweet_error_file.warning("executing 'on_connection_error' disconnect")
-
-    """ https://realpython.com/python-with-statement/#creating-custom-context-managers
-        to perhaps avoid
-        Stream encountered HTTP error: 429
-        HTTP error response text: {"title":"ConnectionException","detail":"This stream is currently at the maximum allowed connection limit.","connection ...
-    """
-    def __enter__(self):
-        logger_stdout.info("Entering the streaming client context...")
-        logger_retweet_file.info("Entering the streaming client context...")
-        logger_retweet_error_file.warning("Entering the streaming client context...")
-
-        return self
-
-    def __exit__(self, exc_type, exc_value, exc_tb):
-        self.disconnect()
-
-        logger_stdout.info("Leaving the Streaming client...")
-        logger_retweet_file.info("Leaving the Streaming client...")
-        logger_retweet_error_file.warning("Leaving the Streaming client...")
-
-        logger_stdout.info(f'''{exc_type}
-        {exc_value}
-        {exc_tb}''')
-
-        logger_retweet_file.info(f'''{exc_type}
-        {exc_value}
-        {exc_tb}''')
-
-        logger_retweet_error_file.warning(f'''{exc_type}
-        {exc_value}
-        {exc_tb}''')
-
-
-        #print(exc_type, exc_value, exc_tb, sep="\n")
-
     def on_tweet(self, tweet):
         try:
             publish = False
@@ -218,7 +179,7 @@ def get_stream_rules():
 
     return stream_rules
 
-def main():
+def main(return_client='no'):
     try:
         # Initialize instance of the subclass
         ##logger_stderr.warning('Starting tweepy.Stream')
@@ -227,14 +188,17 @@ def main():
 
         check_ids_to_follow()
 
-        with CustomStreamingClient(bearer_token) as streaming_client:
-            streaming_client.add_rules(add=get_stream_rules())
-            stream_rules = streaming_client.get_rules()
+        streaming_client = CustomStreamingClient(bearer_token)
+        streaming_client.add_rules(add=get_stream_rules())
+        stream_rules = streaming_client.get_rules()
 
-            ##logger_stdout.info(f'stream_rules: {stream_rules}')
-            logger_retweet_file.info(f'stream_rules: {stream_rules}')
+        ##logger_stdout.info(f'stream_rules: {stream_rules}')
+        logger_retweet_file.info(f'checking client.stream_rules: {stream_rules}')
 
+        if return_client != "yes":
             streaming_client.filter(expansions=['author_id'])
+        else:
+            return streaming_client
     
     except KeyboardInterrupt:
         streaming_client.disconnect()
@@ -247,12 +211,6 @@ def main():
     except Exception as e:
         logger_stderr.error('Stream error - {} - {}'.format(type(e).__name__, e))
         logger_retweet_error_file.error('Stream error - {} - {}'.format(type(e).__name__, e))
-    finally:
-        streaming_client.disconnect()
-        logger_stderr.warning("""
-            Disconnecting streaming client!
-        """)
-        logger_retweet_error_file.warning(f'''Disconnecting streaming client ...''')
 
 if __name__ == '__main__':
     try:    
