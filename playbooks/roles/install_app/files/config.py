@@ -23,7 +23,7 @@ def create_client():  # API v2
         access_token_secret=access_token_secret,
         wait_on_rate_limit=True)
 
-    logger.info("API created")
+    logger.info("client created")
 
     return client
 

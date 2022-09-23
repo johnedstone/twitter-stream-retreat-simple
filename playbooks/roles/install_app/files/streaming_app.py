@@ -24,12 +24,12 @@ from logger import (
     logger_retweet_error_file
 )
 
-#client = create_client()
+#client = create_client() # will use later for retweeting
 
-#consumer_key = os.getenv('API_KEY')
-#consumer_secret = os.getenv('API_KEY_SECRET')
-#access_token = os.getenv('ACCESS_TOKEN')
-#access_token_secret = os.getenv('ACCESS_TOKEN_SECRET')
+consumer_key = os.getenv('API_KEY')
+consumer_secret = os.getenv('API_KEY_SECRET')
+access_token = os.getenv('ACCESS_TOKEN')
+access_token_secret = os.getenv('ACCESS_TOKEN_SECRET')
 bearer_token = os.getenv('BEARER_TOKEN')
 
 include_replys_and_self_retweets_in_log = os.getenv('INCLUDE_REPLYS_AND_SELF_RETWEETS_IN_LOG')
@@ -50,7 +50,7 @@ ids_to_publish_tweets_and_quotes = os.getenv('IDS_TO_PUBLISH_TWEETS_AND_QUOTES')
 if ids_to_publish_tweets_and_quotes:
     ids_to_publish_tweets_and_quotes_list = [int(ea) for ea in ids_to_publish_tweets_and_quotes.split(',')]
 
-known_users = {}
+known_users = {}  # will populate as the app runs
 
 def check_ids_to_follow():
     if not ids_to_follow_list:
@@ -92,125 +92,70 @@ class CustomStreamingClient(tweepy.StreamingClient):
     https://developer.twitter.com/en/docs/twitter-api/fields
     """
 
+    def on_request_error(self, status_code):
+        logger_retweet_file.info('''
+        on_request_error has been called
+        ....
+                ''')
+        super().on_request_error(status_code)
+
     def on_tweet(self, tweet):
         try:
             publish = False
             log_msg = True
             tweet_type = 'Unknown'
-            ##logger_stdout.info(f'{tweet.text}')
+
             logger_retweet_file.info(f'{tweet.text}')
-
-            ##logger_stdout.info(f'{tweet.author_id}')
             logger_retweet_file.info(f'{tweet.author_id}')
-
-            ##logger_stdout.info(f'Which user_id is this a reply: {tweet.in_reply_to_user_id}')
             logger_retweet_file.info(f'Which user_id is this a reply: {tweet.in_reply_to_user_id}')
-
 
             if not tweet.author_id in known_users:
                 known_users[tweet.author_id] = get_screen_name(tweet.author_id)
 
-            ##logger_stdout.info(known_users[tweet.author_id])
-            logger_retweet_file.info(known_users[tweet.author_id])
+            msg = known_users[tweet.author_id]
+            logger_retweet_file.info(msg)
 
-####            is_retweet = hasattr(status, 'retweeted_status')
-####            is_quote = status.is_quote_status
-####
-####
-####            if status.user.id == credentials.id:
-####                tweet_type = 'Apps own retweet'
-####                log_msg = include_replys_and_self_retweets_in_log == "yes"
-####            elif status.user.id not in ids_to_follow_list:
-####                tweet_type = 'status.user.id not in ids_to_follow_list: not an account being followed'
-####            elif status.in_reply_to_status_id:
-####                tweet_type = 'Reply'
-####                log_msg = include_replys_and_self_retweets_in_log == "yes"
-####            elif not is_retweet and not is_quote:
-####                tweet_type = 'Simple Tweet'
-####                publish = True
-####            elif not is_retweet and is_quote:
-####                tweet_type = 'Simple Quote'
-####                if status.user.id not in ids_to_publish_only_tweets_list:
-####                    if status.quoted_status.user.id not in ids_to_follow_list: # as this should have been published already
-####                        publish = True
-####                    else:
-####                        tweet_type = tweet_type + ' should have been retweeted already'
-####                        #logger_stderr.warning(f'What #2 - {status.user.id}')
-####                        #logger_stderr.warning(f'What #2 - {ids_to_follow_list}')
-####                        #logger_stderr.warning(f'What #2 - {status.quoted_status.user.id}')
-####            elif is_retweet:
-####                tweet_type = 'Retweet'
-####                if is_quote:
-####                    tweet_type = tweet_type + ' with Quote'
-####                # else check permissions
-####                elif status.user.id not in ids_to_publish_only_tweets_list: # that is, status.id is allowed to retweet
-####                    if status.user.id not in ids_to_publish_tweets_and_quotes_list: # that is, status.id is allowed to retweet
-####                        if status.retweeted_status.user.id not in ids_to_follow_list: # as this should have been published already
-####                            publish = True
-####                            if is_quote and status.quoted_status.user.id in ids_to_follow_list: # if there is a quote in the retweet, this should have been published already
-####                                publish = False
-####                                tweet_type = tweet_type + ' should have been retweeted already'
-####                        else:
-####                            tweet_type = tweet_type + ' should have been retweeted already'
-####
-####            if publish:
-####                if Publish_Live:
-####                    r = api.retweet(status.id)
-####
         except Exception as e:
             logger_stderr.warning('Custom Streaming Client error - {} - {}'.format(type(e).__name__, e))
             logger_retweet_error_file.warning('Custom Streaming Client error - {} - {}'.format(type(e).__name__, e))
-####
-####        finally:
-####            if log_msg:
-####                msg = f'' \
-####                      f'Publish_Live: {str(Publish_Live):5} | ' \
-####                      f'Published: {str(publish):5} | ' \
-####                      f'{tweet_type:20} | ' \
-####                      f'''{status.user.screen_name:12} | ''' \
-####                      f'''{status.id:12} | ''' \
-####                      f'''{status.text}''' \
-####                      f''
-####                ##logger_retweet_file.info(msg)
-####                logger_stdout.info(msg)
 
 def get_stream_rules():
     stream_rules = [tweepy.StreamRule(value=f'from: {ea}', tag=f'{ea}', id=f'{ea}') for ea in ids_to_follow_list]
 
     return stream_rules
 
-def main(return_client='no'):
+def main():
     try:
-        # Initialize instance of the subclass
-        ##logger_stderr.warning('Starting tweepy.Stream')
-        logger_retweet_file.warning('Starting tweepy.Stream')
-        logger_retweet_error_file.warning('Starting tweepy.Stream')
+        msg = 'Starting tweepy.Stream'
+        logger_retweet_file.info(msg)
+        logger_retweet_error_file.warning(msg)
 
         check_ids_to_follow()
 
-        streaming_client = CustomStreamingClient(bearer_token)
-        streaming_client.add_rules(add=get_stream_rules())
-        stream_rules = streaming_client.get_rules()
+        streaming_client = CustomStreamingClient(bearer_token, wait_on_rate_limit=True)
+        stream_rules = get_stream_rules()
+        #streaming_client.add_rules(add=stream_rules)  # only need to do once it appears
 
-        ##logger_stdout.info(f'stream_rules: {stream_rules}')
-        logger_retweet_file.info(f'checking client.stream_rules: {stream_rules}')
+        current_stream_rules = streaming_client.get_rules()
 
-        if return_client != "yes":
-            streaming_client.filter(expansions=['author_id'])
-        else:
-            return streaming_client
+        msg = f'current stream_rules: {current_stream_rules}'
+        logger_stdout.info(msg)
+        logger_retweet_file.info(msg)
+
+        streaming_client.filter(expansions=['author_id'])
     
     except KeyboardInterrupt:
-        streaming_client.disconnect()
+        streaming_client.session.close()
+        streaming_client.running = False
+        streaming_client.on_disconnect()
         logger_stderr.warning("""
+        streaming.session.close()
         Closing ...
         """)
-        logger_stderr.warning("""
-        Disconnecting streaming client ...
-        """)
     except Exception as e:
-        logger_stderr.error('Stream error - {} - {}'.format(type(e).__name__, e))
-        logger_retweet_error_file.error('Stream error - {} - {}'.format(type(e).__name__, e))
+        msg = 'Stream error - {} - {}'.format(type(e).__name__, e)
+        logger_stderr.error(msg)
+        logger_retweet_error_file.error(msg)
 
 if __name__ == '__main__':
     try:    
