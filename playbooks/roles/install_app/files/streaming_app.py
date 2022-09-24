@@ -105,6 +105,7 @@ class CustomStreamingClient(tweepy.StreamingClient):
             log_msg = True
             tweet_type = 'Unknown'
 
+            logger_retweet_file.info(f'Start: tweet.id {tweet.id}')
             logger_retweet_file.info(f'{tweet.text}')
             logger_retweet_file.info(f'{tweet.author_id}')
             logger_retweet_file.info(f'Which user_id is this a reply: {tweet.in_reply_to_user_id}')
@@ -112,7 +113,7 @@ class CustomStreamingClient(tweepy.StreamingClient):
             if not tweet.author_id in known_users:
                 known_users[tweet.author_id] = get_screen_name(tweet.author_id)
 
-            msg = known_users[tweet.author_id]
+            msg = f'End: tweet.author_id {known_users[tweet.author_id]}'
             logger_retweet_file.info(msg)
 
         except Exception as e:
