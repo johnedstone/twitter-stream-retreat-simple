@@ -12,8 +12,8 @@ A simple example describing:
     * Read ansible instructions in [playbooks/Readme_ansible.md](https://github.com/johnedstone/twitter-stream-retreat-simple/tree/main/playbooks)
 
 ### Changes
-* 23-Sep-2022: just created a `tag` v2.
-commit 40d47848b5d457e33efda113d41daa50e76fd22e
+* 23-Sep-2022: just created a `tag` v2.  
+[commit 40d47848b5d457e33efda113d41daa50e76fd22e](https://github.com/johnedstone/twitter-stream-retreat-simple/tree/40d47848b5d457e33efda113d41daa50e76fd22e)
 This tag is based on the Twitter API v2.  It's notes read as follows:
 ```
 Working example for Twitter API v2 ....
