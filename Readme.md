@@ -11,6 +11,18 @@ A simple example describing:
     * install python3-virtualenv `sudo apt install python3-virtualenv`
     * Read ansible instructions in [playbooks/Readme_ansible.md](https://github.com/johnedstone/twitter-stream-retreat-simple/tree/main/playbooks)
 
+### Changes
+* 23-Sep-2022: just created a `tag` v2.
+commit 40d47848b5d457e33efda113d41daa50e76fd22e
+This tag is based on the Twitter API v2.  It's notes read as follows:
+```
+Working example for Twitter API v2 ....
+still missing some tweets because of
+Stream connection has errored or timed out
+Stream encountered HTTP error: 429
+HTTP error response text: {"title":"ConnectionException","detail":"This stream is currently at the maximum allowed connection limit.","connection_issue":"TooManyConnections","type":"https://api.twitter.com/2/problems/streaming-connection"}
+```
+
 ### Link to Streaming App python code
 The files that this ansible playbook installs
 that comprise the streaming app can be found in
