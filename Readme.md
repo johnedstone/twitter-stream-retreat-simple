@@ -12,12 +12,13 @@ A simple example describing:
     * Read ansible instructions in [playbooks/Readme_ansible.md](https://github.com/johnedstone/twitter-stream-retreat-simple/tree/main/playbooks)
 
 ### Changes
+* 03-Oct-2022: created branch api-v2 Notes: this appears to be missing tweets because of the timeout, "on request error"
 * 18-Sep-2022: created `tag` v1.1  
 [commit b986ae55a228e4bd6f3f57ef992226d1080c7859](https://github.com/johnedstone/twitter-stream-retreat-simple/tree/b986ae55a228e4bd6f3f57ef992226d1080c7859)  
 ```
 Working example for Twitter API v1.1
 ```
-* 23-Sep-2022: created a `tag` v2  
+* 23-Sep-2022: created a `tag` v2 (see notes on api-v2 branch above, 03-Oct-2022)
 [commit 40d47848b5d457e33efda113d41daa50e76fd22e](https://github.com/johnedstone/twitter-stream-retreat-simple/tree/40d47848b5d457e33efda113d41daa50e76fd22e)    
 This tag is based on the Twitter API v2.  It's notes read as follows:
 ```
