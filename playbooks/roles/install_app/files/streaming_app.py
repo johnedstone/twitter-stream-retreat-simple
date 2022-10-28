@@ -93,10 +93,7 @@ class CustomStreamingClient(tweepy.StreamingClient):
     """
 
     def on_request_error(self, status_code):
-        logger_retweet_file.info('''
-        on_request_error has been called
-        ....
-                ''')
+        logger_retweet_file.info('''on_request_error has been called ....  ''')
         super().on_request_error(status_code)
 
     def on_tweet(self, tweet):
