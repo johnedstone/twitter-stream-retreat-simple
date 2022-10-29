@@ -24,6 +24,12 @@ from logger import (
     logger_retweet_error_file
 )
 
+# Use for debugging
+import logging
+FORMAT = '%(asctime)s [%(levelname)s]: %(message)s'
+logging.basicConfig(level=logging.DEBUG, format=FORMAT)
+
+
 #client = create_client() # will use later for retweeting
 
 consumer_key = os.getenv('API_KEY')
@@ -54,24 +60,24 @@ known_users = {}  # will populate as the app runs
 
 def check_ids_to_follow():
     if not ids_to_follow_list:
-        logger_stderr.error('Fatal: No user accounts to follow!  Yikes!!!')
+        ###logger_stderr.error('Fatal: No user accounts to follow!  Yikes!!!')
         logger_retweet_error_file.error('Fatal: No user accounts to follow!  Yikes')
         raise SystemExit
     else:
         msg = f'''{"Following:":40}{[get_screen_name(ea) for ea in ids_to_follow_list]}'''
         logger_retweet_file.info(msg)
         logger_retweet_error_file.warning(msg)
-        logger_stdout.info(msg)
+        ###logger_stdout.info(msg)
 
         msg = f'''{"Retweeting only tweets:":40}{[get_screen_name(ea) for ea in ids_to_publish_only_tweets_list]}'''
         logger_retweet_file.info(msg)
         logger_retweet_error_file.warning(msg)
-        logger_stdout.info(msg)
+        ###logger_stdout.info(msg)
 
         msg = f'''{"Retweeting tweets and quotes:":40}{[get_screen_name(ea) for ea in ids_to_publish_tweets_and_quotes_list]}'''
         logger_retweet_file.info(msg)
         logger_retweet_error_file.warning(msg)
-        logger_stdout.info(msg)
+        ###logger_stdout.info(msg)
 
         not_restricted_ids = [ea for ea in ids_to_follow_list]
         for ea in ids_to_publish_only_tweets_list:
@@ -83,7 +89,7 @@ def check_ids_to_follow():
         msg = f'''{"Retweeting tweets, quotes and retweets:":40}{[get_screen_name(ea) for ea in not_restricted_ids]}'''
         logger_retweet_file.info(msg)
         logger_retweet_error_file.warning(msg)
-        logger_stdout.info(msg)
+        ###logger_stdout.info(msg)
     
 
 class CustomStreamingClient(tweepy.StreamingClient):
@@ -93,7 +99,9 @@ class CustomStreamingClient(tweepy.StreamingClient):
     """
 
     def on_request_error(self, status_code):
-        logger_retweet_file.info('''on_request_error has been called ....  ''')
+        msg = 'on_request_error has been called ....  '
+        logger_retweet_file.info(msg)
+        logger_stdout.info(msg)
         super().on_request_error(status_code)
 
     def on_tweet(self, tweet):
@@ -114,7 +122,7 @@ class CustomStreamingClient(tweepy.StreamingClient):
             logger_retweet_file.info(msg)
 
         except Exception as e:
-            logger_stderr.warning('Custom Streaming Client error - {} - {}'.format(type(e).__name__, e))
+            ###logger_stderr.warning('Custom Streaming Client error - {} - {}'.format(type(e).__name__, e))
             logger_retweet_error_file.warning('Custom Streaming Client error - {} - {}'.format(type(e).__name__, e))
 
 def get_stream_rules():
@@ -137,7 +145,7 @@ def main():
         current_stream_rules = streaming_client.get_rules()
 
         msg = f'current stream_rules: {current_stream_rules}'
-        logger_stdout.info(msg)
+        ###logger_stdout.info(msg)
         logger_retweet_file.info(msg)
 
         streaming_client.filter(expansions=['author_id'])
