@@ -17,17 +17,17 @@ from get_user_screen_name import get_screen_name
 
 load_dotenv()
 
-from logger import (
-    logger_stdout,
-    logger_stderr,
-    logger_retweet_file,
-    logger_retweet_error_file
-)
+#from logger import (
+    ###logger_stdout,
+    ###logger_stderr,
+    ###logger_retweet_file,
+    ###logger_retweet_error_file
+#)
 
 # Use for debugging
 import logging
 FORMAT = '%(asctime)s [%(levelname)s]: %(message)s'
-logging.basicConfig(level=logging.DEBUG, format=FORMAT)
+logging.basicConfig(level=logging.DEBUG, format=FORMAT, filename='/tmp/debug.log')
 
 
 #client = create_client() # will use later for retweeting
@@ -60,23 +60,28 @@ known_users = {}  # will populate as the app runs
 
 def check_ids_to_follow():
     if not ids_to_follow_list:
-        ###logger_stderr.error('Fatal: No user accounts to follow!  Yikes!!!')
-        logger_retweet_error_file.error('Fatal: No user accounts to follow!  Yikes')
+        msg = 'Fatal: No user accounts to follow!  Yikes!!!'
+        logging.error(msg)
+        ###logger_stderr.error(msg)
+        ###logger_retweet_error_file.error(msg)
         raise SystemExit
     else:
         msg = f'''{"Following:":40}{[get_screen_name(ea) for ea in ids_to_follow_list]}'''
-        logger_retweet_file.info(msg)
-        logger_retweet_error_file.warning(msg)
+        #logging.info(msg)
+        ###logger_retweet_file.info(msg)
+        ###logger_retweet_error_file.warning(msg)
         ###logger_stdout.info(msg)
 
         msg = f'''{"Retweeting only tweets:":40}{[get_screen_name(ea) for ea in ids_to_publish_only_tweets_list]}'''
-        logger_retweet_file.info(msg)
-        logger_retweet_error_file.warning(msg)
+        #logging.info(msg)
+        ###logger_retweet_file.info(msg)
+        ###logger_retweet_error_file.warning(msg)
         ###logger_stdout.info(msg)
 
         msg = f'''{"Retweeting tweets and quotes:":40}{[get_screen_name(ea) for ea in ids_to_publish_tweets_and_quotes_list]}'''
-        logger_retweet_file.info(msg)
-        logger_retweet_error_file.warning(msg)
+        #logging.info(msg)
+        ###logger_retweet_file.info(msg)
+        ###logger_retweet_error_file.warning(msg)
         ###logger_stdout.info(msg)
 
         not_restricted_ids = [ea for ea in ids_to_follow_list]
@@ -87,8 +92,9 @@ def check_ids_to_follow():
             not_restricted_ids.remove(ea)
 
         msg = f'''{"Retweeting tweets, quotes and retweets:":40}{[get_screen_name(ea) for ea in not_restricted_ids]}'''
-        logger_retweet_file.info(msg)
-        logger_retweet_error_file.warning(msg)
+        #logging.info(msg)
+        ###logger_retweet_file.info(msg)
+        ###logger_retweet_error_file.warning(msg)
         ###logger_stdout.info(msg)
     
 
@@ -99,9 +105,10 @@ class CustomStreamingClient(tweepy.StreamingClient):
     """
 
     def on_request_error(self, status_code):
-        msg = 'on_request_error has been called ....  '
-        logger_retweet_file.info(msg)
-        logger_stdout.info(msg)
+        msg = 'custom method: on_request_error has been called ....  '
+        logging.info(msg)
+        ###logger_retweet_file.info(msg)
+        ###logger_stdout.info(msg)
         super().on_request_error(status_code)
 
     def on_tweet(self, tweet):
@@ -110,20 +117,23 @@ class CustomStreamingClient(tweepy.StreamingClient):
             log_msg = True
             tweet_type = 'Unknown'
 
-            logger_retweet_file.info(f'Start: tweet.id {tweet.id}')
-            logger_retweet_file.info(f'{tweet.text}')
-            logger_retweet_file.info(f'{tweet.author_id}')
-            logger_retweet_file.info(f'Which user_id is this a reply: {tweet.in_reply_to_user_id}')
+            ###logger_retweet_file.info(f'Start: tweet.id {tweet.id}')
+            ###logger_retweet_file.info(f'{tweet.text}')
+            ###logger_retweet_file.info(f'{tweet.author_id}')
+            ###logger_retweet_file.info(f'Which user_id is this a reply: {tweet.in_reply_to_user_id}')
 
             if not tweet.author_id in known_users:
                 known_users[tweet.author_id] = get_screen_name(tweet.author_id)
 
             msg = f'End: tweet.author_id {known_users[tweet.author_id]}'
-            logger_retweet_file.info(msg)
+            logging.info(msg)
+            ###logger_retweet_file.info(msg)
 
         except Exception as e:
+            msg ='Custom Streaming Client error - {} - {}'.format(type(e).__name__, e)
+            logging.warning(msg)
             ###logger_stderr.warning('Custom Streaming Client error - {} - {}'.format(type(e).__name__, e))
-            logger_retweet_error_file.warning('Custom Streaming Client error - {} - {}'.format(type(e).__name__, e))
+            ###logger_retweet_error_file.warning('Custom Streaming Client error - {} - {}'.format(type(e).__name__, e))
 
 def get_stream_rules():
     stream_rules = [tweepy.StreamRule(value=f'from: {ea}', tag=f'{ea}', id=f'{ea}') for ea in ids_to_follow_list]
@@ -133,8 +143,8 @@ def get_stream_rules():
 def main():
     try:
         msg = 'Starting tweepy.Stream'
-        logger_retweet_file.info(msg)
-        logger_retweet_error_file.warning(msg)
+        ###logger_retweet_file.info(msg)
+        ###logger_retweet_error_file.warning(msg)
 
         check_ids_to_follow()
 
@@ -146,7 +156,7 @@ def main():
 
         msg = f'current stream_rules: {current_stream_rules}'
         ###logger_stdout.info(msg)
-        logger_retweet_file.info(msg)
+        ###logger_retweet_file.info(msg)
 
         streaming_client.filter(expansions=['author_id'])
     
@@ -154,20 +164,23 @@ def main():
         streaming_client.session.close()
         streaming_client.running = False
         streaming_client.on_disconnect()
-        logger_stderr.warning("""
+        ###logger_stderr.warning("""
+        logging.warning("""
         streaming.session.close()
         Closing ...
         """)
     except Exception as e:
         msg = 'Stream error - {} - {}'.format(type(e).__name__, e)
-        logger_stderr.error(msg)
-        logger_retweet_error_file.error(msg)
+        logging.error(msg)
+        ###logger_stderr.error(msg)
+        ###logger_retweet_error_file.error(msg)
 
 if __name__ == '__main__':
     try:    
         main()
     except KeyboardInterrupt:
-        logger_stderr.warning("""
+        ###logger_stderr.warning("""
+        logging.warning("""
         Closing ...
         """)
 
