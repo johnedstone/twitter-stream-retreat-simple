@@ -43,8 +43,9 @@
   become: yes
   service:
     name: "{{ app_name }}"
-    enabled: yes
-    state: started
+    #enabled: yes
+    enabled: no
+    #state: started
 
 - name: Rsync twitter helper scripts
   synchronize:
