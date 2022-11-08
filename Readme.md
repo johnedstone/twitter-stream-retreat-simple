@@ -1,4 +1,4 @@
-## Currently debugging 429 errors
+## Currently debugging 429 errors: branch == api-v2-debug
 As of Nov, 2022 using this branch to debug 429 errors. Please read `Readme_429_error.md`
 
 ## Description
