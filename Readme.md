@@ -1,5 +1,5 @@
 ## Currently debugging 429 errors
-As of Nov, 2022 using this branch to debug 429 errors
+As of Nov, 2022 using this branch to debug 429 errors. Please read `Readme_429_error.md`
 
 ## Description
 A simple example describing:
