@@ -1,9 +1,11 @@
+## Currently debugging 429 errors
+As of Nov, 2022 using this branch to debug 429 errors
 
 ## Description
 A simple example describing:
 * Retweeting a list of twitter accounts into one twitter account
-* Using [tweepy.Stream](https://docs.tweepy.org/en/stable/streaming.html) (version 4.5.0)
-* Installed with an ansible playbook on an AWS ec2 instance (Ubuntu 20.04 LTS)
+* Using [tweepy.Stream](https://docs.tweepy.org/en/stable/streaming.html)
+* Installed with an ansible playbook on an AWS ec2 instance
     * Optional: When creating the ec2, add storage, so that it's persistent if the ec2 instance is destroyed.  Mount on `/opt/apps`.
          * [Reference to format additional storage](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/add-instance-store-volumes.html)
          * [Reference to automount additional storage](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-using-volumes.html#ebs-mount-after-reboot)
@@ -12,7 +14,7 @@ A simple example describing:
     * Read ansible instructions in [playbooks/Readme_ansible.md](https://github.com/johnedstone/twitter-stream-retreat-simple/tree/main/playbooks)
 
 ### Changes
-* 03-Oct-2022: created branch api-v2 Notes: this appears to be missing tweets because of the timeout, "on request error"
+* 03-Oct-2022: created branch api-v2
 * 18-Sep-2022: created `tag` v1.1  
 [commit b986ae55a228e4bd6f3f57ef992226d1080c7859](https://github.com/johnedstone/twitter-stream-retreat-simple/tree/b986ae55a228e4bd6f3f57ef992226d1080c7859)  
 ```
@@ -37,7 +39,7 @@ that comprise the streaming app can be found in
 ### Notes on Twitter identifiers API v2
 * currently migrating this app to API v2
 
-### Notes on Twitter identifiers API v1.1
+### Notes on Twitter identifiers API v1.1 (Obsolete)
 * Retweet: If a user retweets a Quote, it is identified as a __retweet and a quote__
 [reference](https://developer.twitter.com/en/docs/twitter-api/v1/data-dictionary/object-model/tweet)
 * Quote: if a user quotes a tweet, it is identified as a __quote__ but not a __retweet__
