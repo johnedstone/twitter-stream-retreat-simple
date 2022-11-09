@@ -8,7 +8,7 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-logger = logging.getLogger()
+log = logging.getLogger(__name__)
 
 consumer_key = os.getenv("API_KEY")
 consumer_secret = os.getenv("API_KEY_SECRET")
@@ -23,7 +23,7 @@ def create_client():  # API v2
         access_token_secret=access_token_secret,
         wait_on_rate_limit=True)
 
-    logger.info("client created")
+    log.info("client created")
 
     return client
 
