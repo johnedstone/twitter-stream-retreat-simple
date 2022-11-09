@@ -65,6 +65,16 @@ Command: `egrep -v 'Received keep' my_retweet/debug.log`
 2022-11-08 14:39:14,314 [INFO]: Stream disconnected (my Ctrl-C)
 ```
 
+#### Log #2 (success)
+**Note: no disconnects in 9+ hours**
+
+```
+2022-11-08 15:07:22,255 [DEBUG]: Starting new HTTPS connection (1): api.twitter.com:443
+2022-11-08 15:07:22,561 [DEBUG]: https://api.twitter.com:443 "GET /2/tweets/search/stream HTTP/1.1" 200 None
+2022-11-08 15:07:22,562 [INFO]: Stream connected
+2022-11-09 00:40:54,207 [INFO]: Stream disconnected
+```
+
 <!--
 # vim: ai et ts=4 sw=4 sts=4 nu
 -->
