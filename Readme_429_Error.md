@@ -9,6 +9,7 @@ HTTP error response text: {"title":"ConnectionException","detail":"This stream i
 ```
 
 ### The code
+The code as recommended by `tweepy` in this [discussion: link](https://github.com/tweepy/tweepy/discussions/1963)
 ```
 >>> import logging
 >>> import tweepy
@@ -32,7 +33,7 @@ git+https://github.com/tweepy/tweepy.git
 ### Logs
 Command: `egrep -v 'Received keep' my_retweet/debug.log`
 
-#### Log #0
+#### Log #0 (failure)
 **Note: 429 error happens soon after the start**
 ```
 2022-11-01 19:32:47,560 [DEBUG]: Starting new HTTPS connection (1): api.twitter.com:443
@@ -49,7 +50,7 @@ Command: `egrep -v 'Received keep' my_retweet/debug.log`
 2022-11-01 19:34:09,210 [ERROR]: HTTP error response text: {"title":"ConnectionException","detail":"This stream is currently at the maximum allowed connection limit.","connection_issue":"TooManyConnections","type":"https://api.twitter.com/2/problems/streaming-connection"}
 ```
 
-#### Log #1
+#### Log #1 (success)
 **Note: Only one disconnect in almost 24 hours, and reconnected in < 1 sec with status code 200**
 
 ```
