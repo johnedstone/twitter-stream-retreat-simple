@@ -33,7 +33,7 @@ git+https://github.com/tweepy/tweepy.git
 Command: `egrep -v 'Received keep' my_retweet/debug.log`
 
 #### Log #0
-Note: 429 error happens soon after the start
+**Note: 429 error happens soon after the start**
 ```
 2022-11-01 19:32:47,560 [DEBUG]: Starting new HTTPS connection (1): api.twitter.com:443
 2022-11-01 19:32:47,890 [DEBUG]: https://api.twitter.com:443 "GET /2/tweets/search/stream HTTP/1.1" 200 None
@@ -61,7 +61,7 @@ Note: 429 error happens soon after the start
 2022-11-08 00:12:05,673 [DEBUG]: Resetting dropped connection: api.twitter.com
 2022-11-08 00:12:05,955 [DEBUG]: https://api.twitter.com:443 "GET /2/tweets/search/stream HTTP/1.1" 200 None
 2022-11-08 00:12:05,955 [INFO]: Stream connected
-2022-11-08 14:39:14,314 [INFO]: Stream disconnected
+2022-11-08 14:39:14,314 [INFO]: Stream disconnected (my Ctrl-C)
 ```
 
 <!--
