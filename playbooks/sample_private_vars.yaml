@@ -2,13 +2,13 @@
 HOSTNAME: 'your.hostname.org'
 local_timezone: 'America/New_York'
 app_name: 'your_app_name' # used to make app directory
-tweepy_version: '4.5.0'
 HELLO_WORLD_APP_SCRIPT: hello_world.py
 PATH_TO_PYTHON: '/path/to/virtualenv/python, e.g. /opt/apps/my_app/venv/bin/python'
 
+LOG_LEVEL: WARNING
+
 Production_scripts:
   - config.py
-  - logger.py
   - streaming_app.py
   - get_user_screen_name.py
 

@@ -19,8 +19,9 @@ else:
     logging.basicConfig(level=LOG_LEVEL, format=FORMAT)
 log = logging.getLogger(__name__)
 
-
 client = create_client() # will use later for retweeting
+
+sys.exit('Exiting .... work in progress')
 
 #-#bearer_token = os.getenv('BEARER_TOKEN')
 #-#
