@@ -1,4 +1,4 @@
-## This Readme if for the branch == api-v2-debug
+## This Readme is for the branch == api-v2-debug
 As of Nov, 2022 using this branch to debug 429 errors. Please read `Readme_429_error.md`
 
 <!--
