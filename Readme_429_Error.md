@@ -28,6 +28,42 @@ git+https://github.com/tweepy/tweepy.git
 |0|Oregon us-west-2|yes|t3.micro|3.8.10|12.4.1|yes|Ubuntu 20.04.5 LTS|ami-05b45bd47471e1710|x86_64|[GCC 9.4.0] on linux|Canonical, Ubuntu, 20.04 LTS, amd64 focal image build on 2022-01-31|
 |1|Virginia us-east-1|no|t2.micro|3.7.10|12.4.1|no|Amazon Linux 2|ami-09d3b3274b6c5d4aa|x86_64|[GCC 7.3.1 20180712 (Red Hat 7.3.1-13)] on linux|Amazon Linux 2 Kernel 5.10 AMI 2.0.20221004.0 x86_64 HVM gp2|
 |2|Virginia us-east-1|no|t2.micro|3.7.10|12.4.1|yes|Amazon Linux 2|ami-09d3b3274b6c5d4aa|x86_64|[GCC 7.3.1 20180712 (Red Hat 7.3.1-13)] on linux|Amazon Linux 2 Kernel 5.10 AMI 2.0.20221004.0 x86_64 HVM gp2||
+
+### Logs
+Command: `egrep -v 'Received keep' my_retweet/debug.log`
+
+#### Log #0
+Note: 429 error happens soon after the start
+```
+2022-11-01 19:32:47,560 [DEBUG]: Starting new HTTPS connection (1): api.twitter.com:443
+2022-11-01 19:32:47,890 [DEBUG]: https://api.twitter.com:443 "GET /2/tweets/search/stream HTTP/1.1" 200 None
+2022-11-01 19:32:47,891 [INFO]: Stream connected
+2022-11-01 19:33:07,776 [DEBUG]: Received keep-alive signal
+2022-11-01 19:33:27,781 [DEBUG]: Received keep-alive signal
+2022-11-01 19:33:47,791 [DEBUG]: Received keep-alive signal
+2022-11-01 19:34:08,811 [ERROR]: Stream connection has errored or timed out
+2022-11-01 19:34:08,816 [ERROR]: Connection error: requests.exceptions.ConnectionError: HTTPSConnectionPool(host='api.twitter.com', port=443): Read timed out.
+2022-11-01 19:34:09,068 [DEBUG]: Resetting dropped connection: api.twitter.com
+2022-11-01 19:34:09,208 [DEBUG]: https://api.twitter.com:443 "GET /2/tweets/search/stream HTTP/1.1" 429 171
+2022-11-01 19:34:09,209 [ERROR]: Stream encountered HTTP error: 429
+2022-11-01 19:34:09,210 [ERROR]: HTTP error response text: {"title":"ConnectionException","detail":"This stream is currently at the maximum allowed connection limit.","connection_issue":"TooManyConnections","type":"https://api.twitter.com/2/problems/streaming-connection"}
+```
+
+#### Log #1
+**Note: Only one disconnect in almost 24 hours, and reconnected in < 1 sec with status code 200**
+
+```
+2022-11-07 15:07:36,193 [DEBUG]: Starting new HTTPS connection (1): api.twitter.com:443
+2022-11-07 15:07:36,515 [DEBUG]: https://api.twitter.com:443 "GET /2/tweets/search/stream HTTP/1.1" 200 None
+2022-11-07 15:07:36,516 [INFO]: Stream connected
+2022-11-08 00:12:05,660 [ERROR]: Stream connection has errored or timed out
+2022-11-08 00:12:05,671 [ERROR]: Connection error: requests.exceptions.ChunkedEncodingError: ("Connection broken: InvalidChunkLength(got length b'', 0 bytes read)", InvalidChunkLength(got length b'', 0 bytes read))
+2022-11-08 00:12:05,673 [DEBUG]: Resetting dropped connection: api.twitter.com
+2022-11-08 00:12:05,955 [DEBUG]: https://api.twitter.com:443 "GET /2/tweets/search/stream HTTP/1.1" 200 None
+2022-11-08 00:12:05,955 [INFO]: Stream connected
+2022-11-08 14:39:14,314 [INFO]: Stream disconnected
+```
+
 <!--
 # vim: ai et ts=4 sw=4 sts=4 nu
 -->
