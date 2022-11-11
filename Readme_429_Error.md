@@ -31,7 +31,7 @@ git+https://github.com/tweepy/tweepy.git
 |2|Virginia us-east-1|no |t2.micro|3.7.10|12.4.1|yes|Amazon Linux 2|ami-09d3b3274b6c5d4aa|x86_64|Amazon Linux 2 Kernel 5.10 AMI 2.0.20221004.0 x86_64 HVM gp2|[GCC 7.3.1 20180712 (Red Hat 7.3.1-13)] on linux|
 |3|Oregon us-west-2  |yes|t2.micro|3.7.10|12.4.1|no |Amazon Linux 2|ami-0d593311db5abb72b|x86_64|Amazon Linux 2 Kernel 5.10 AMI 2.0.20221004.0 x86_64 HVM gp2|[GCC 7.3.1 20180712 (Red Hat 7.3.1-13)] on linux|
 |4|Virginia us-east-1|no|t2.micro|3.9.2|12.4.1|no|Debian GNU/Linux 11 (bullseye)|ami-09d3b3274b6c5d4aa|x86_64|Debian 11 (20220503-998)|[GCC 10.2.1 20210110] on linux|
-|5|Ohio us-east-2|testing|t2.micro|3.9.2|12.4.1|no|Debian GNU/Linux 11 (bullseye)|ami-0c7c4e3c6b4941f0f|x86_64|Debian 11 (20220503-998)|[GCC 10.2.1 20210110] on linux|
+|5|Ohio us-east-2|no|t2.micro|3.9.2|12.4.1|no|Debian GNU/Linux 11 (bullseye)|ami-0c7c4e3c6b4941f0f|x86_64|Debian 11 (20220503-998)|[GCC 10.2.1 20210110] on linux|
 
 ### Logs
 Command: `egrep -v 'Received keep' my_retweet/debug.log`
@@ -104,6 +104,24 @@ Command: `egrep -v 'Received keep' my_retweet/debug.log`
 2022-11-09 02:37:13,751 [DEBUG]: https://api.twitter.com:443 "GET /2/tweets/search/stream HTTP/1.1" 200 None
 2022-11-09 02:37:13,752 [INFO]: Stream connected
 2022-11-10 00:15:15,530 [INFO]: Stream disconnected
+```
+
+#### Log #5 (success)
+**Note: 2 successful disconnects/connect in 28+ hrs**
+```
+2022-11-10 00:44:50,895 [DEBUG]: Starting new HTTPS connection (1): api.twitter.com:443
+2022-11-10 00:44:51,204 [DEBUG]: https://api.twitter.com:443 "GET /2/tweets/search/stream HTTP/1.1" 200 None
+2022-11-10 00:44:51,205 [INFO]: Stream connected
+2022-11-11 01:28:15,640 [ERROR]: Received errors: [{'title': 'operational-disconnect', 'disconnect_type': 'OperationalDisconnect', 'detail': 'This stream has been disconnected for operational reasons.', 'type': 'https://api.twitter.com/2/problems/operational-disconnect'}]
+2022-11-11 01:28:15,640 [DEBUG]: Received response: StreamResponse(data=None, includes={}, errors=[{'title': 'operational-disconnect', 'disconnect_type': 'OperationalDisconnect', 'detail': 'This stream has been disconnected for operational reasons.', 'type': 'https://api.twitter.com/2/problems/operational-disconnect'}], matching_rules=[])
+2022-11-11 01:28:15,640 [ERROR]: Stream connection closed by Twitter
+2022-11-11 01:28:15,851 [DEBUG]: https://api.twitter.com:443 "GET /2/tweets/search/stream HTTP/1.1" 200 None
+2022-11-11 01:28:15,851 [INFO]: Stream connected
+2022-11-11 05:19:21,715 [ERROR]: Stream connection has errored or timed out
+2022-11-11 05:19:21,717 [ERROR]: Connection error: requests.exceptions.ChunkedEncodingError: ("Connection broken: InvalidChunkLength(got length b'', 0 bytes read)", InvalidChunkLength(got length b'', 0 bytes read))
+2022-11-11 05:19:21,718 [DEBUG]: Resetting dropped connection: api.twitter.com
+2022-11-11 05:19:22,011 [DEBUG]: https://api.twitter.com:443 "GET /2/tweets/search/stream HTTP/1.1" 200 None
+2022-11-11 05:19:22,011 [INFO]: Stream connected
 ```
 
 <!--
