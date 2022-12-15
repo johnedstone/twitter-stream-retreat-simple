@@ -32,6 +32,7 @@ git+https://github.com/tweepy/tweepy.git
 |3|Oregon us-west-2  |yes|t2.micro|3.7.10|12.4.1|no |Amazon Linux 2|ami-0d593311db5abb72b|x86_64|Amazon Linux 2 Kernel 5.10 AMI 2.0.20221004.0 x86_64 HVM gp2|[GCC 7.3.1 20180712 (Red Hat 7.3.1-13)] on linux|
 |4|Virginia us-east-1|no|t2.micro|3.9.2|12.4.1|no|Debian GNU/Linux 11 (bullseye)|ami-09d3b3274b6c5d4aa|x86_64|Debian 11 (20220503-998)|[GCC 10.2.1 20210110] on linux|
 |5|Ohio us-east-2|no|t2.micro|3.9.2|12.4.1|no|Debian GNU/Linux 11 (bullseye)|ami-0c7c4e3c6b4941f0f|x86_64|Debian 11 (20220503-998)|[GCC 10.2.1 20210110] on linux|
+*Note: wondering if t2.micro in Log 1-5 is a typo, and should have been t3.micro*
 
 ### Logs
 Command: `egrep -v 'Received keep' my_retweet/debug.log`
