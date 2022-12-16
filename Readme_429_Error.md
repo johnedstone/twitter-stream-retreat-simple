@@ -128,7 +128,7 @@ Command: `egrep -v 'Received keep' my_retweet/debug.log`
 ```
 
 #### Log #6 (Failure) FreeBSD 13.1 p5
-**43 hours. This worked earlir on with Debian, in Ohio.  Now, not so with FreeBSD**  
+**43 hours. This worked earlier on with Debian, in Ohio.  Now, not so with FreeBSD**  
 There were 9 disconnects, 3 of these were 429, i.e 3 x 15 min misses.  The other 6 reconnected (status_code == 200) immediately, as expected
 
 <!--
