@@ -33,6 +33,7 @@ git+https://github.com/tweepy/tweepy.git
 |4|Virginia us-east-1|no|t2.micro|3.9.2|4.12.1|Prd|20221111|no|Debian GNU/Linux 11 (bullseye)|ami-09d3b3274b6c5d4aa|x86_64|Debian 11 (20220503-998)|[GCC 10.2.1 20210110] on linux|
 |5|Ohio us-east-2|no|t2.micro|3.9.2|4.12.1|Prd|20221109|no|Debian GNU/Linux 11 (bullseye)|ami-0c7c4e3c6b4941f0f|x86_64|Debian 11 (20220503-998)|[GCC 10.2.1 20210110] on linux|
 |6|Ohio_us-east-2|yes|t3.nano|3.9.15|4.12.1|Dev|20221216|no|FreeBSD 13.1-RELEASE-amd64 UEFI-ac170f9b-f71a-458c-ac8e-1bf96b74e270|ami-06da7ba49b6d2466e|x86_64|FreeBSD/amd64 releng/13.1@fc952ac2212|[Clang 13.0.0 (git@github.com:llvm/llvm-project.git llvmorg-13.0.0-0-gd7b669b3a on freebsd13|
+
 *Note: wondering if t2.micro in Log 1-5 is a typo, and should have been t3.micro*
 
 ### Logs
