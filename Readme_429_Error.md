@@ -24,18 +24,17 @@ git+https://github.com/tweepy/tweepy.git
 ```
 
 ### Comparison
-|Log|AWS Region|429 Error|size|python|tweepy|BToken|Date|Elastic IP|Pretty Name|ami id|arch|AMI Description|GCC|
-|---|--------|  :---:  |----|------|------|---|---|  :---:   |-----------|------|-------|----------|---------------|
-|0|Oregon_us-west-2|yes|t3.micro|3.8.10|4.12.1|Prd|20221108|yes|Ubuntu 20.04.5 LTS|ami-05b45bd47471e1710|x86_64|Canonical, Ubuntu, 20.04 LTS, amd64 focal image build on 2022-01-31|[GCC 9.4.0] on linux|
-|1|Virginia us-east-1|no |t2.micro|3.7.10|4.12.1|Prd|20221108|no |Amazon Linux 2|ami-09d3b3274b6c5d4aa|x86_64|Amazon Linux 2 Kernel 5.10 AMI 2.0.20221004.0 x86_64 HVM gp2|[GCC 7.3.1 20180712 (Red Hat 7.3.1-13)] on linux|
-|2|Virginia us-east-1|no |t2.micro|3.7.10|4.12.1|Prd|20221108|yes|Amazon Linux 2|ami-09d3b3274b6c5d4aa|x86_64|Amazon Linux 2 Kernel 5.10 AMI 2.0.20221004.0 x86_64 HVM gp2|[GCC 7.3.1 20180712 (Red Hat 7.3.1-13)] on linux|
-|3|Oregon us-west-2  |yes|t2.micro|3.7.10|4.12.1|Prd|20221108|no |Amazon Linux 2|ami-0d593311db5abb72b|x86_64|Amazon Linux 2 Kernel 5.10 AMI 2.0.20221004.0 x86_64 HVM gp2|[GCC 7.3.1 20180712 (Red Hat 7.3.1-13)] on linux|
-|4|Virginia us-east-1|no|t2.micro|3.9.2|4.12.1|Prd|20221111|no|Debian GNU/Linux 11 (bullseye)|ami-09d3b3274b6c5d4aa|x86_64|Debian 11 (20220503-998)|[GCC 10.2.1 20210110] on linux|
-|5|Ohio us-east-2|no|t2.micro|3.9.2|4.12.1|Prd|20221109|no|Debian GNU/Linux 11 (bullseye)|ami-0c7c4e3c6b4941f0f|x86_64|Debian 11 (20220503-998)|[GCC 10.2.1 20210110] on linux|
-|6|Ohio_us-east-2|yes|t3.nano|3.9.15|4.12.1|Dev|20221216|no|FreeBSD 13.1-RELEASE-amd64 UEFI-ac170f9b-f71a-458c-ac8e-1bf96b74e270|ami-06da7ba49b6d2466e|x86_64|FreeBSD/amd64 releng/13.1@fc952ac2212|[Clang 13.0.0 (git@github.com:llvm/llvm-project.git llvmorg-13.0.0-0-gd7b669b3a on freebsd13|
-|7|Ohio_us-east-2|tbd|t3.nano|3.9.2|4.12.1|Dev|202212|no|Debian GNU/Linux 11 (bullseye)|ami-0b3e2bb9a70a08ad3|x86_64|Debian 11 (20221205-1220)|[GCC 10.2.1 20210110] on linux|
+|Log|AWS Region|429 Error|size|mode|python|tweepy|BToken|Date|Elastic IP|Pretty Name|ami id|arch|AMI Description|GCC|
+|---|----------|  :---:  |----|----|------|------|------|----|  :---:   |-----------|------|----|---------------|---|
+|0|Oregon us-west-2|yes|t3.micro|cli|3.8.10|4.12.1|Prd|20221108|yes|Ubuntu 20.04.5 LTS|ami-05b45bd47471e1710|x86_64|Canonical, Ubuntu, 20.04 LTS, amd64 focal image build on 2022-01-31|[GCC 9.4.0] on linux|
+|1|Virginia us-east-1|no |t2.micro|cli|3.7.10|4.12.1|Prd|20221108|no |Amazon Linux 2|ami-09d3b3274b6c5d4aa|x86_64|Amazon Linux 2 Kernel 5.10 AMI 2.0.20221004.0 x86_64 HVM gp2|[GCC 7.3.1 20180712 (Red Hat 7.3.1-13)] on linux|
+|2|Virginia us-east-1|no |t2.micro|cli|3.7.10|4.12.1|Prd|20221108|yes|Amazon Linux 2|ami-09d3b3274b6c5d4aa|x86_64|Amazon Linux 2 Kernel 5.10 AMI 2.0.20221004.0 x86_64 HVM gp2|[GCC 7.3.1 20180712 (Red Hat 7.3.1-13)] on linux|
+|3|Oregon us-west-2  |yes|t2.micro|cli|3.7.10|4.12.1|Prd|20221108|no |Amazon Linux 2|ami-0d593311db5abb72b|x86_64|Amazon Linux 2 Kernel 5.10 AMI 2.0.20221004.0 x86_64 HVM gp2|[GCC 7.3.1 20180712 (Red Hat 7.3.1-13)] on linux|
+|4|Virginia us-east-1|no|t2.micro|cli|3.9.2|4.12.1|Prd|20221111|no|Debian GNU/Linux 11 (bullseye)|ami-09d3b3274b6c5d4aa|x86_64|Debian 11 (20220503-998)|[GCC 10.2.1 20210110] on linux|
+|5|Ohio us-east-2|no|t2.micro|cli|3.9.2|4.12.1|Prd|20221109|no|Debian GNU/Linux 11 (bullseye)|ami-0c7c4e3c6b4941f0f|x86_64|Debian 11 (20220503-998)|[GCC 10.2.1 20210110] on linux|
+|6|Ohio us-east-2|yes|t3.nano|script|3.9.15|4.12.1|Dev|20221216|no|FreeBSD 13.1-RELEASE-amd64 UEFI-ac170f9b-f71a-458c-ac8e-1bf96b74e270|ami-06da7ba49b6d2466e|x86_64|FreeBSD/amd64 releng/13.1@fc952ac2212|[Clang 13.0.0 (git@github.com:llvm/llvm-project.git llvmorg-13.0.0-0-gd7b669b3a on freebsd13|
+|7|Ohio us-east-2|tbd|t3.nano|script|3.9.2|4.12.1|Dev|202212|no|Debian GNU/Linux 11 (bullseye)|ami-0b3e2bb9a70a08ad3|x86_64|Debian 11 (20221205-1220)|[GCC 10.2.1 20210110] on linux|
 
-*Note: wondering if t2.micro in Log 1-5 is a typo, and should have been t3.micro*
 
 ### Logs
 Command: `egrep -v 'Received keep' my_retweet/debug.log`
