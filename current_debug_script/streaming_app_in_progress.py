@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 import sys
@@ -30,7 +31,7 @@ class CustomStreamingClient(tweepy.StreamingClient):
 
     def on_data(self, raw_data):
         super().on_data(raw_data)
-        logging.info(data)
+        logging.info(json.loads(raw_data))
 
     def get_stream_rules(self):
         stream_rules = [tweepy.StreamRule(value=f'from: {ea}', tag=f'{ea}', id=f'{ea}') for ea in ids_to_follow_list]
