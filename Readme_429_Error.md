@@ -1,4 +1,8 @@
 ### This is branch == api-v2-debug
+### Current Thinking
+* Prior to December, the problem appeared to be resolved by moving location out of Oregon us-west-2, See for instance #0-5
+* However, as of 2022-12-17, see #6-7, the problem can also be seen in Ohio us-east-2.  So, it's not solved by moving regions.
+
 ### The problem
 Running the following snippet, in the `us-west-2` region on a Ubuntu t3.micro with an Elastic IP
 resulted in the followin error, soon after starting the client.
@@ -33,7 +37,7 @@ git+https://github.com/tweepy/tweepy.git
 |4|Virginia us-east-1|no|t2.micro|cli|3.9.2|4.12.1|Prd|20221111|no|Debian GNU/Linux 11 (bullseye)|ami-09d3b3274b6c5d4aa|x86_64|Debian 11 (20220503-998)|[GCC 10.2.1 20210110] on linux|
 |5|Ohio us-east-2|no|t2.micro|cli|3.9.2|4.12.1|Prd|20221109|no|Debian GNU/Linux 11 (bullseye)|ami-0c7c4e3c6b4941f0f|x86_64|Debian 11 (20220503-998)|[GCC 10.2.1 20210110] on linux|
 |6|Ohio us-east-2|yes|t3.nano|script|3.9.15|4.12.1|Dev|20221216|no|FreeBSD 13.1-RELEASE-amd64 UEFI-ac170f9b-f71a-458c-ac8e-1bf96b74e270|ami-06da7ba49b6d2466e|x86_64|FreeBSD/amd64 releng/13.1@fc952ac2212|[Clang 13.0.0 (git@github.com:llvm/llvm-project.git llvmorg-13.0.0-0-gd7b669b3a on freebsd13|
-|7|Ohio us-east-2|tbd|t3.nano|script|3.9.2|4.12.1|Dev|202212|no|Debian GNU/Linux 11 (bullseye)|ami-0b3e2bb9a70a08ad3|x86_64|Debian 11 (20221205-1220)|[GCC 10.2.1 20210110] on linux|
+|7|Ohio us-east-2|yes|t3.nano|script|3.9.2|4.12.1|Dev|20221217|no|Debian GNU/Linux 11 (bullseye)|ami-0b3e2bb9a70a08ad3|x86_64|Debian 11 (20221205-1220)|[GCC 10.2.1 20210110] on linux|
 
 
 ### Logs
@@ -130,6 +134,10 @@ Command: `egrep -v 'Received keep' my_retweet/debug.log`
 #### Log #6 (Failure) FreeBSD 13.1 p5
 **43 hours. This worked earlier on with Debian, in Ohio.  Now, not so with FreeBSD**  
 There were 9 disconnects, 3 of these were 429, i.e 3 x 15 min misses.  The other 6 reconnected (status_code == 200) immediately, as expected
+
+#### Log #7 (Failure)
+**23 hours.
+There were 2 disconnects, 1 of these were 429, i.e one 15 min misse.  The other one reconnected (status_code == 200) immediately, as expected
 
 <!--
 # vim: ai et ts=4 sw=4 sts=4 nu
