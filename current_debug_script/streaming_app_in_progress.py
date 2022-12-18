@@ -23,13 +23,16 @@ if ids_to_follow:
 
 class CustomStreamingClient(tweepy.StreamingClient):
     def on_tweet(self, tweet):
-        try:
-            logging.info(tweet)
-        except Exception as e:
-            msg = f'on_tweet Exception: {e}'
-            logging.warning(msg)
+        logging.info(tweet)
 
-    def get_stream_rules():
+    def on_includes(self, includes):
+        logging.info(includes)
+
+    def on_data(self, raw_data):
+        super().on_data(raw_data)
+        logging.info(data)
+
+    def get_stream_rules(self):
         stream_rules = [tweepy.StreamRule(value=f'from: {ea}', tag=f'{ea}', id=f'{ea}') for ea in ids_to_follow_list]
 
         return stream_rules
@@ -47,8 +50,9 @@ def main():
         current_stream_rules = streaming_client.get_rules()
         logging.info(f'Current stream rules: {stream_rules}')
 
-        #streaming_client.filter(expansions=['author_id'])
-        streaming_client.filter()
+        # https://twittercommunity.com/t/how-to-get-usernames-for-related-tweet-search-api/160086/4
+        streaming_client.filter(expansions=['author_id'], user_fields=['username'])
+        #streaming_client.filter()
     
     except KeyboardInterrupt:
         streaming_client.session.close()
