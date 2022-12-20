@@ -24,14 +24,20 @@ if ids_to_follow:
 
 class CustomStreamingClient(tweepy.StreamingClient):
     def on_tweet(self, tweet):
-        logging.info(tweet)
+        pass # logging.info(f'tweet: {tweet}')
 
     def on_includes(self, includes):
-        logging.info(includes)
+        pass #logging.info(f'includes {includes}')
 
     def on_data(self, raw_data):
         super().on_data(raw_data)
-        logging.info(json.loads(raw_data))
+        my_data = json.loads(raw_data)
+        logging.info(f'json.loads: {my_data}')
+        if 'data' in my_data and 'includes' in my_data:
+            logging.info(f'tweet text: {my_data["data"]["text"]}')
+            logging.info(f'tweet id: {my_data["data"]["id"]}')
+            for ea in my_data['includes']['users']:
+                    logging.info(f'username: {ea["username"]}')
 
     def get_stream_rules(self):
         stream_rules = [tweepy.StreamRule(value=f'from: {ea}', tag=f'{ea}', id=f'{ea}') for ea in ids_to_follow_list]
@@ -46,13 +52,14 @@ def main():
         streaming_client = CustomStreamingClient(bearer_token)
         stream_rules = streaming_client.get_stream_rules()
         logging.info(f'Stream rules: {stream_rules}')
-        #streaming_client.add_rules(add=stream_rules)  # only need to do once it appears
+        streaming_client.add_rules(add=stream_rules)  # only need to do once it appears
 
         current_stream_rules = streaming_client.get_rules()
         logging.info(f'Current stream rules: {stream_rules}')
 
         # https://twittercommunity.com/t/how-to-get-usernames-for-related-tweet-search-api/160086/4
-        streaming_client.filter(expansions=['author_id'], user_fields=['username'])
+        #streaming_client.filter(expansions=['author_id'], user_fields=['username'])
+        streaming_client.filter(expansions=['author_id'])
         #streaming_client.filter()
     
     except KeyboardInterrupt:
