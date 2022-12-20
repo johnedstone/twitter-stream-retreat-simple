@@ -38,6 +38,7 @@ git+https://github.com/tweepy/tweepy.git
 |5|Ohio us-east-2|no|t2.micro|cli|3.9.2|4.12.1|Prd|20221109|no|Debian GNU/Linux 11 (bullseye)|ami-0c7c4e3c6b4941f0f|x86_64|Debian 11 (20220503-998)|[GCC 10.2.1 20210110] on linux|
 |6|Ohio us-east-2|yes|t3.nano|script|3.9.15|4.12.1|Dev|20221216|no|FreeBSD 13.1-RELEASE-amd64 UEFI-ac170f9b-f71a-458c-ac8e-1bf96b74e270|ami-06da7ba49b6d2466e|x86_64|FreeBSD/amd64 releng/13.1@fc952ac2212|[Clang 13.0.0 (git@github.com:llvm/llvm-project.git llvmorg-13.0.0-0-gd7b669b3a on freebsd13|
 |7|Ohio us-east-2|yes|t3.nano|script|3.9.2|4.12.1|Dev|20221217|no|Debian GNU/Linux 11 (bullseye)|ami-0b3e2bb9a70a08ad3|x86_64|Debian 11 (20221205-1220)|[GCC 10.2.1 20210110] on linux|
+|8|Ohio us-east-2|yes|t3.nano|script|3.9.2|4.12.1|Dev|20221220|no|Debian GNU/Linux 11 (bullseye)|ami-0b3e2bb9a70a08ad3|x86_64|Debian 11 (20221205-1220)|[GCC 10.2.1 20210110] on linux|
 
 
 ### Logs
@@ -136,8 +137,12 @@ Command: `egrep -v 'Received keep' my_retweet/debug.log`
 There were 9 disconnects, 3 of these were 429, i.e 3 x 15 min misses.  The other 6 reconnected (status_code == 200) immediately, as expected
 
 #### Log #7 (Failure)
-**23 hours.
+**23 hours.**
 There were 2 disconnects, 1 of these were 429, i.e one 15 min misse.  The other one reconnected (status_code == 200) immediately, as expected
+
+#### Log #8 (Failure)
+**51 hours until a failure - same config as #7**
+There were 2 disconnects, 1 of these were 429, the other was an `operational disconnect` and it reconnected < 1 sec.
 
 <!--
 # vim: ai et ts=4 sw=4 sts=4 nu
