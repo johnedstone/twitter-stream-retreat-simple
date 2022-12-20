@@ -14,44 +14,73 @@ logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s [%(levelname)s]: %(message)s',
                     filename=logging_file)
 
+def create_list(string_list):
+    return list(filter(None, [int(ea) for ea in string_list.split(',')]))
+
+def get_stream_rules():
+    stream_rules = [tweepy.StreamRule(value=f'from: {ea}', tag=f'{ea}', id=f'{ea}') for ea in ids_to_follow_list]
+
+    return stream_rules
+
 bearer_token = os.getenv('BEARER_TOKEN')
 
-ids_to_follow_list = []
 ids_to_follow = os.getenv('IDS_TO_FOLLOW')
-if ids_to_follow:
-    ids_to_follow_list = [int(ea) for ea in ids_to_follow.split(',')]
+ids_to_follow_list = create_list(ids_to_follow)
+logging.debug(ids_to_follow_list)
+logging.debug(type(ids_to_follow_list))
+
+ids_not_to_publish = os.getenv('IDS_NOT_TO_PUBLISH')
+ids_not_to_publish_list = create_list(ids_to_follow)
+logging.debug(ids_not_to_publish_list)
+logging.debug(type(ids_not_to_publish_list))
 
 
 class CustomStreamingClient(tweepy.StreamingClient):
+
     def on_tweet(self, tweet):
-        pass # logging.info(f'tweet: {tweet}')
+        logging.debug(f'tweet: {tweet}')
 
     def on_includes(self, includes):
-        pass #logging.info(f'includes {includes}')
+        logging.debug(f'includes {includes}')
 
     def on_data(self, raw_data):
         super().on_data(raw_data)
+
+        is_simple_tweet = False
+        is_reply = False
+        is_retweet = False
+        is_quote = False
+        publish = False
+
         my_data = json.loads(raw_data)
         logging.info(f'json.loads: {my_data}')
+
         if 'data' in my_data and 'includes' in my_data:
             logging.info(f'tweet text: {my_data["data"]["text"]}')
             logging.info(f'tweet id: {my_data["data"]["id"]}')
             for ea in my_data['includes']['users']:
                     logging.info(f'username: {ea["username"]}')
 
-    def get_stream_rules(self):
-        stream_rules = [tweepy.StreamRule(value=f'from: {ea}', tag=f'{ea}', id=f'{ea}') for ea in ids_to_follow_list]
+        logging.debug(int(my_data['data']['author_id']))
+        logging.debug(type(int(my_data['data']['author_id'])))
+        if my_data['data']['author_id'] in ids_not_to_publish:
+            # publish is already False, i.e. will not publish
+            logging.info('This tweet is in the list not to publish')
+        elif(1 ==1):
+            pass
 
-        return stream_rules
+        logging.info(f'Publish: {publish}')
+            
 
 def main():
     try:
         msg = '########## Starting tweepy.StreamClient ##########'
         logging.info(msg)
 
-        streaming_client = CustomStreamingClient(bearer_token)
-        stream_rules = streaming_client.get_stream_rules()
+        stream_rules = get_stream_rules()
         logging.info(f'Stream rules: {stream_rules}')
+
+        streaming_client = CustomStreamingClient(bearer_token)
         streaming_client.add_rules(add=stream_rules)  # only need to do once it appears
 
         current_stream_rules = streaming_client.get_rules()
