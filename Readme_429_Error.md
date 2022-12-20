@@ -106,7 +106,7 @@ Command: `egrep -v 'Received keep' my_retweet/debug.log`
 ```
 
 #### Log #4 (success)
-**Note: no disconnects in almost 22 hours**
+**Note: no disconnects in almost 22 hours**  
 ```
 022-11-09 02:37:13,495 [DEBUG]: Starting new HTTPS connection (1): api.twitter.com:443
 2022-11-09 02:37:13,751 [DEBUG]: https://api.twitter.com:443 "GET /2/tweets/search/stream HTTP/1.1" 200 None
@@ -115,7 +115,7 @@ Command: `egrep -v 'Received keep' my_retweet/debug.log`
 ```
 
 #### Log #5 (success)
-**Note: 2 successful disconnects/connect in 28+ hrs**
+**Note: 2 successful disconnects/connect in 28+ hrs**  
 ```
 2022-11-10 00:44:50,895 [DEBUG]: Starting new HTTPS connection (1): api.twitter.com:443
 2022-11-10 00:44:51,204 [DEBUG]: https://api.twitter.com:443 "GET /2/tweets/search/stream HTTP/1.1" 200 None
@@ -137,11 +137,11 @@ Command: `egrep -v 'Received keep' my_retweet/debug.log`
 There were 9 disconnects, 3 of these were 429, i.e 3 x 15 min misses.  The other 6 reconnected (status_code == 200) immediately, as expected
 
 #### Log #7 (Failure)
-**23 hours.**
+**23 hours.**  
 There were 2 disconnects, 1 of these were 429, i.e one 15 min misse.  The other one reconnected (status_code == 200) immediately, as expected
 
 #### Log #8 (Failure)
-**51 hours until a failure - same config as #7**
+**51 hours until a failure - same config as #7**  
 There were 2 disconnects, 1 of these were 429, the other was an `operational disconnect` and it reconnected < 1 sec.
 
 <!--
