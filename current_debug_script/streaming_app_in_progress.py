@@ -7,12 +7,16 @@ import tweepy
 from dotenv import load_dotenv
 
 load_dotenv()
+print_to_file = os.getenv('PRINT_TO_FILE', 'no') == 'yes'
 logging_file = os.getenv('LOGGING_FILE', 'debug.log')
 
 
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s [%(levelname)s]: %(message)s') #,
-                    #filename=logging_file)
+if print_to_file:
+    logging.basicConfig(level=logging.DEBUG,
+            format='%(asctime)s [%(levelname)s]: %(message)s', filename=logging_file)
+else:
+    logging.basicConfig(level=logging.DEBUG,
+            format='%(asctime)s [%(levelname)s]: %(message)s')
 
 def create_list(string_list):
     return list(filter(None, [int(ea) for ea in string_list.split(',')]))
