@@ -47,6 +47,8 @@ class CustomStreamingClient(tweepy.StreamingClient):
         logging.debug(f'tweet.data: {tweet.data}')
         logging.debug(f'tweet.author_id: {tweet.author_id}')
         logging.debug(f'tweet.in_reply_to_user_id: {tweet.in_reply_to_user_id}')
+        logging.debug(f'tweet.referenced_tweets: {tweet.referenced_tweets}')
+        logging.debug(f'{dir(tweet)}')
 
         if int(tweet.author_id) in ids_not_to_publish_list:
             logging.debug('This tweet is in the list not to publish')
