@@ -11,8 +11,8 @@ logging_file = os.getenv('LOGGING_FILE', 'debug.log')
 
 
 logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s [%(levelname)s]: %(message)s',
-                    filename=logging_file)
+                    format='%(asctime)s [%(levelname)s]: %(message)s') #,
+                    #filename=logging_file)
 
 def create_list(string_list):
     return list(filter(None, [int(ea) for ea in string_list.split(',')]))
@@ -38,7 +38,30 @@ logging.debug(type(ids_not_to_publish_list))
 class CustomStreamingClient(tweepy.StreamingClient):
 
     def on_tweet(self, tweet):
+        logging.debug(f'{"#"*20} Start {"#"*20}') 
         logging.debug(f'tweet: {tweet}')
+        logging.debug(f'tweet.data: {tweet.data}')
+        logging.debug(f'tweet.author_id: {tweet.author_id}')
+        logging.debug(f'tweet.in_reply_to_user_id: {tweet.in_reply_to_user_id}')
+
+        if int(tweet.author_id) in ids_not_to_publish_list:
+            logging.debug('This tweet is in the list not to publish')
+
+        if tweet.in_reply_to_user_id:
+            logging.debug('This tweet is a reply')
+        else:
+            logging.debug('This tweet is NOT a reply')
+
+        if 'referenced_tweets' in tweet.data.keys():
+            for ea in tweet.data['referenced_tweets']:
+                if ea['type'] == 'quoted':
+                    logging.debug('This is a quote')
+                if ea['type'] == 'retweeted':
+                    logging.debug('This is a retweet')
+        else:
+            logging.debug('This is a simple tweet, i.e. not a Reply, Retweet, nor Comment ("Quoted Tweet")')
+        
+        logging.debug(f'{"#"*20} END {"#"*20}') 
 
     def on_includes(self, includes):
         logging.debug(f'includes {includes}')
@@ -46,30 +69,8 @@ class CustomStreamingClient(tweepy.StreamingClient):
     def on_data(self, raw_data):
         super().on_data(raw_data)
 
-        is_simple_tweet = False
-        is_reply = False
-        is_retweet = False
-        is_quote = False
-        publish = False
-
         my_data = json.loads(raw_data)
-        logging.info(f'json.loads: {my_data}')
-
-        if 'data' in my_data and 'includes' in my_data:
-            logging.info(f'tweet text: {my_data["data"]["text"]}')
-            logging.info(f'tweet id: {my_data["data"]["id"]}')
-            for ea in my_data['includes']['users']:
-                    logging.info(f'username: {ea["username"]}')
-
-        logging.debug(int(my_data['data']['author_id']))
-        logging.debug(type(int(my_data['data']['author_id'])))
-        if my_data['data']['author_id'] in ids_not_to_publish:
-            # publish is already False, i.e. will not publish
-            logging.info('This tweet is in the list not to publish')
-        elif(1 ==1):
-            pass
-
-        logging.info(f'Publish: {publish}')
+        logging.debug(f'json.loads: {my_data}')
             
 
 def main():
@@ -81,14 +82,13 @@ def main():
         logging.info(f'Stream rules: {stream_rules}')
 
         streaming_client = CustomStreamingClient(bearer_token)
-        streaming_client.add_rules(add=stream_rules)  # only need to do once it appears
+        streaming_client.add_rules(add=stream_rules)  # only need to do once it appears, but no harm in calling it
 
         current_stream_rules = streaming_client.get_rules()
         logging.info(f'Current stream rules: {stream_rules}')
 
-        # https://twittercommunity.com/t/how-to-get-usernames-for-related-tweet-search-api/160086/4
-        #streaming_client.filter(expansions=['author_id'], user_fields=['username'])
-        streaming_client.filter(expansions=['author_id'])
+        streaming_client.filter(expansions=['author_id'], user_fields=['username'],
+                tweet_fields=['in_reply_to_user_id', 'referenced_tweets'])
         #streaming_client.filter()
     
     except KeyboardInterrupt:
