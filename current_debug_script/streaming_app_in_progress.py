@@ -20,7 +20,11 @@ else:
             format='%(asctime)s [%(levelname)s]: %(message)s')
 
 def create_list(string_list):
-    return list(filter(None, [int(ea) for ea in string_list.split(',')]))
+    list_to_return = list(filter(None, string_list.split(',')))
+    if list_to_return:
+        list_to_return = [int(ea) for ea in list_to_return]
+
+    return list_to_return
 
 def get_stream_rules():
     stream_rules = [tweepy.StreamRule(value=f'from: {ea}', tag=f'{ea}', id=f'{ea}') for ea in IDS_TO_FOLLOW_LIST]
@@ -29,15 +33,33 @@ def get_stream_rules():
 
 bearer_token = os.getenv('BEARER_TOKEN')
 
-IDS_TO_FOLLOW = os.getenv('IDS_TO_FOLLOW')
+IDS_TO_FOLLOW = os.getenv('IDS_TO_FOLLOW', '')
 IDS_TO_FOLLOW_LIST = create_list(IDS_TO_FOLLOW)
-logging.debug(IDS_TO_FOLLOW_LIST)
-logging.debug(type(IDS_TO_FOLLOW_LIST))
+logging.debug(f'IDS_TO_FOLLOW (to Retweet Simple Tweets): {IDS_TO_FOLLOW_LIST}')
+if not IDS_TO_FOLLOW_LIST:
+    logging.error("""
 
-IDS_NOT_PUBLISH = os.getenv('IDS_NOT_TO_PUBLISH')
-IDS_NOT_TO_PUBLISH = create_list(IDS_TO_FOLLOW)
-logging.debug(IDS_NOT_TO_PUBLISH)
-logging.debug(type(IDS_NOT_TO_PUBLISH))
+    Yikes! There are no IDs to follow!!
+    Exiting!!!
+
+    """)
+    sys.exit()
+
+IDS_NOT_TO_RETWEET = os.getenv('IDS_NOT_TO_RETWEET', '')
+IDS_NOT_TO_RETWEET_LIST = create_list(IDS_NOT_TO_RETWEET)
+logging.debug(f'IDS_NOT_TO_RETWEET: {IDS_NOT_TO_RETWEET_LIST}')
+
+IDS_NOT_TO_RETWEET_RETWEETS = os.getenv('IDS_NOT_TO_RETWEET_RETWEETS', '')
+IDS_NOT_TO_RETWEET_RETWEETS_LIST = create_list(IDS_NOT_TO_RETWEET_RETWEETS)
+logging.debug(f'IDS_NOT_TO_RETWEET_RETWEETS: {IDS_NOT_TO_RETWEET_RETWEETS_LIST}')
+
+IDS_NOT_TO_RETWEET_QUOTES = os.getenv('IDS_NOT_TO_RETWEET_QUOTES', '')
+IDS_NOT_TO_RETWEET_QUOTES_LIST = create_list(IDS_NOT_TO_RETWEET_QUOTES)
+logging.debug(f'IDS_NOT_TO_RETWEET_QUOTES: {IDS_NOT_TO_RETWEET_QUOTES_LIST}')
+
+IDS_NOT_TO_RETWEET_REPLIES = os.getenv('IDS_NOT_TO_RETWEET_REPLIES', '')
+IDS_NOT_TO_RETWEET_REPLIES_LIST = create_list(IDS_NOT_TO_RETWEET_REPLIES)
+logging.debug(f'IDS_NOT_TO_RETWEET_REPLIES: {IDS_NOT_TO_RETWEET_REPLIES_LIST}')
 
 
 class CustomStreamingClient(tweepy.StreamingClient):
@@ -52,11 +74,16 @@ class CustomStreamingClient(tweepy.StreamingClient):
         logging.debug(f'{dir(tweet)}')
 
         verified = False
-        publish = False
+        retweet = False
 
         while not verified:
             if tweet.in_reply_to_user_id:
                 logging.debug('This tweet is a reply')
+                if tweet.author_id in IDS_NOT_TO_RETWEET_REPLIES_LIST:
+                    logging.debug('The author_id of this reply is in the list not to retweet replies')
+                    verified = True
+                    retweet = False
+                    break
             else:
                 logging.debug('This tweet is NOT a reply')
 
@@ -65,28 +92,40 @@ class CustomStreamingClient(tweepy.StreamingClient):
                 for ea in tweet.data['referenced_tweets']:
                     if ea['type'] == 'quoted':
                         logging.debug('This is a quote')
+                        if tweet.author_id in IDS_NOT_TO_RETWEET_QUOTES_LIST:
+                            logging.debug('The author_id of this Quote is in the list not to retweet quotes')
+                            verified = True
+                            retweet = False
+                            break
                     if ea['type'] == 'retweeted':
                         logging.debug('This is a retweet')
-
-                    if int(tweet.author_id) not in IDS_NOT_TO_PUBLISH:
-                        if ea.id in IDS_TO_FOLLOW_LIST:
-                            logging.debug('This retreat or quote should already have been "seen"')
+                        if tweet.author_id in IDS_NOT_TO_RETWEET_RETWEETS_LIST:
+                            logging.debug('The author_id of this Retweet is in the list not to retweet retweets')
                             verified = True
-                            publish = False
+                            retweet = False
                             break
+
+                    if int(ea['id']) in IDS_TO_FOLLOW_LIST:
+                        logging.debug('This retreat or quote should already have been "seen"')
+                        verified = True
+                        retweet = False
+                        break
+                # ... then "retweet":w
+                verified = True
+                retweet = False
             else:
                 verified = True
-                publish = True
+                retweet = True
                 logging.debug('This is a simple tweet, i.e. not a Reply, Retweet, nor Comment ("Quoted Tweet")')
 
-            if int(tweet.author_id) in IDS_NOT_TO_PUBLISH:
-                logging.debug('The author_id of this tweet is in the list not to publish')
-                verified = True
-                publish = False
-                break
+        logging.debug(f'{type(tweet.author_id)} -- {type(IDS_NOT_TO_RETWEET_LIST)}')
+        if tweet.author_id in IDS_NOT_TO_RETWEET_LIST:
+            logging.debug('The author_id of this tweet is in the list not to retweet')
+            verified = True
+            retweet = False
 
         logging.debug(f'Verified: {verified}')
-        logging.debug(f'Publish: {publish}')
+        logging.debug(f'Retweet: {retweet}')
         logging.debug(f'{"#"*20} END {"#"*20}') 
 
     def on_includes(self, includes):
