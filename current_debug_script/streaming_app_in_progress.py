@@ -116,6 +116,7 @@ class CustomStreamingClient(tweepy.StreamingClient):
                 retweet = True
                 logging.debug('This is a simple Tweet, i.e. not a Reply, Retweet, nor Comment ("Quoted Tweet")')
 
+        logging.debug(f'{tweet.author_id} -- {IDS_NOT_TO_RETWEET_LIST}')
         logging.debug(f'{type(tweet.author_id)} -- {type(IDS_NOT_TO_RETWEET_LIST)}')
         if tweet.author_id in IDS_NOT_TO_RETWEET_LIST:
             logging.debug('The author_id of this Tweet is in the list not to retweet')
