@@ -80,7 +80,7 @@ class CustomStreamingClient(tweepy.StreamingClient):
             if tweet.in_reply_to_user_id:
                 logging.debug('This tweet is a reply')
                 if tweet.author_id in IDS_NOT_TO_RETWEET_REPLIES_LIST:
-                    logging.debug('The author_id of this reply is in the list not to retweet replies')
+                    logging.debug('The author_id of this Reply is in the list not to retweet replies')
                     verified = True
                     retweet = False
                     break
@@ -106,7 +106,7 @@ class CustomStreamingClient(tweepy.StreamingClient):
                             break
 
                     if int(ea['id']) in IDS_TO_FOLLOW_LIST:
-                        logging.debug('This retreat or quote should already have been "seen"')
+                        logging.debug('This Retreat or Quote should already have been "seen"')
                         verified = True
                         retweet = False
                         break
@@ -116,11 +116,11 @@ class CustomStreamingClient(tweepy.StreamingClient):
             else:
                 verified = True
                 retweet = True
-                logging.debug('This is a simple tweet, i.e. not a Reply, Retweet, nor Comment ("Quoted Tweet")')
+                logging.debug('This is a simple Tweet, i.e. not a Reply, Retweet, nor Comment ("Quoted Tweet")')
 
         logging.debug(f'{type(tweet.author_id)} -- {type(IDS_NOT_TO_RETWEET_LIST)}')
         if tweet.author_id in IDS_NOT_TO_RETWEET_LIST:
-            logging.debug('The author_id of this tweet is in the list not to retweet')
+            logging.debug('The author_id of this Tweet is in the list not to retweet')
             verified = True
             retweet = False
 
