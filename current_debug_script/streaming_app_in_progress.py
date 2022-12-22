@@ -78,27 +78,25 @@ class CustomStreamingClient(tweepy.StreamingClient):
 
         while not verified:
             if tweet.in_reply_to_user_id:
-                logging.debug('This tweet is a reply')
+                logging.debug('This tweet is a Reply')
                 if tweet.author_id in IDS_NOT_TO_RETWEET_REPLIES_LIST:
                     logging.debug('The author_id of this Reply is in the list not to retweet replies')
                     verified = True
                     retweet = False
                     break
-            else:
-                logging.debug('This tweet is NOT a reply')
 
             # For Retweet or Comment (Quote)
             if 'referenced_tweets' in tweet.data.keys():
                 for ea in tweet.data['referenced_tweets']:
                     if ea['type'] == 'quoted':
-                        logging.debug('This is a quote')
+                        logging.debug('This is a Quote')
                         if tweet.author_id in IDS_NOT_TO_RETWEET_QUOTES_LIST:
                             logging.debug('The author_id of this Quote is in the list not to retweet quotes')
                             verified = True
                             retweet = False
                             break
                     if ea['type'] == 'retweeted':
-                        logging.debug('This is a retweet')
+                        logging.debug('This is a Retweet')
                         if tweet.author_id in IDS_NOT_TO_RETWEET_RETWEETS_LIST:
                             logging.debug('The author_id of this Retweet is in the list not to retweet retweets')
                             verified = True
