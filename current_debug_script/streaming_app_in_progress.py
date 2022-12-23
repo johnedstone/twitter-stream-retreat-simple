@@ -118,7 +118,7 @@ class CustomStreamingClient(tweepy.StreamingClient):
         logging.debug(f'{"#"*20} END {"#"*20}') 
 
     def on_includes(self, includes):
-        pass #logging.debug(f'includes {includes}')
+        logging.info(f'includes: {includes}')
 
     def on_data(self, raw_data):
         super().on_data(raw_data)
