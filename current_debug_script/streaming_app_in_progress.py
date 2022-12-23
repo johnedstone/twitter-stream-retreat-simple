@@ -86,7 +86,7 @@ class CustomStreamingClient(tweepy.StreamingClient):
         logging.info(f'tweet.author_id: {tweet.author_id}')
         logging.info(f'tweet: {tweet}')
         logging.debug(f'tweet.referenced_tweets: {tweet.referenced_tweets}')
-        #logging.debug(f'tweet.data: {tweet.data}')
+        logging.debug(f'tweet.data: {tweet.data}')
         #logging.debug(f'tweet.in_reply_to_user_id: {tweet.in_reply_to_user_id}')
         #logging.debug(f'{dir(tweet)}')
 
@@ -158,7 +158,7 @@ class CustomStreamingClient(tweepy.StreamingClient):
         logging.debug(f'{"#"*20} END {"#"*20}') 
 
     def on_includes(self, includes):
-        logging.info(f'includes: {includes}')
+        logging.debug(f'includes: {includes}')
 
     def on_data(self, raw_data):
         super().on_data(raw_data)
