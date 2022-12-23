@@ -68,8 +68,8 @@ class CustomStreamingClient(tweepy.StreamingClient):
         logging.debug(f'{"#"*20} Start {"#"*20}') 
         logging.info(f'tweet.author_id: {tweet.author_id}')
         logging.info(f'tweet: {tweet}')
-        logging.debug(f'tweet.data: {tweet.data}')
         logging.debug(f'tweet.referenced_tweets: {tweet.referenced_tweets}')
+        #logging.debug(f'tweet.data: {tweet.data}')
         #logging.debug(f'tweet.in_reply_to_user_id: {tweet.in_reply_to_user_id}')
         #logging.debug(f'{dir(tweet)}')
 
@@ -86,15 +86,15 @@ class CustomStreamingClient(tweepy.StreamingClient):
                 break
 
             # For Retweet or Comment (Quote)
-            if 'referenced_tweets' in tweet.data.keys():
+            if tweet.referenced_tweets:
                 verified = True
-                for ea in tweet.data['referenced_tweets']:
-                    if ea['type'] == 'quoted':
+                for ea in tweet.referenced_tweets:
+                    if ea.type == 'quoted':
                         logging.info('This is a Quote')
                         if tweet.author_id in IDS_TO_RETWEET_QUOTES_LIST:
                             logging.debug('The author_id of this Quote is in the list to retweet quotes')
                             retweet = True
-                    if ea['type'] == 'retweeted':
+                    if ea.type == 'retweeted':
                         logging.info('This is a Retweet')
                         if tweet.author_id in IDS_TO_RETWEET_RETWEETS_LIST:
                             logging.debug('The author_id of this Retweet is in the list to retweet retweets')
