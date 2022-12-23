@@ -27,16 +27,16 @@ def create_list(string_list):
     return list_to_return
 
 def get_stream_rules():
-    stream_rules = [tweepy.StreamRule(value=f'from: {ea}', tag=f'{ea}', id=f'{ea}') for ea in IDS_TO_FOLLOW_LIST]
+    stream_rules = [tweepy.StreamRule(value=f'from: {ea}', tag=f'{ea}', id=f'{ea}') for ea in IDS_TO_RETWEET_TWEETS_LIST]
 
     return stream_rules
 
 bearer_token = os.getenv('BEARER_TOKEN')
 
-IDS_TO_FOLLOW = os.getenv('IDS_TO_FOLLOW', '')
-IDS_TO_FOLLOW_LIST = create_list(IDS_TO_FOLLOW)
-logging.debug(f'IDS_TO_FOLLOW (to Retweet Simple Tweets): {IDS_TO_FOLLOW_LIST}')
-if not IDS_TO_FOLLOW_LIST:
+IDS_TO_RETWEET_TWEETS = os.getenv('IDS_TO_RETWEET_TWEETS', '')
+IDS_TO_RETWEET_TWEETS_LIST = create_list(IDS_TO_RETWEET_TWEETS)
+logging.debug(f'IDS_TO_RETWEET_TWEETS (to Retweet Simple Tweets): {IDS_TO_RETWEET_TWEETS}')
+if not IDS_TO_RETWEET_TWEETS_LIST:
     logging.error("""
 
     Yikes! There are no IDs to follow!!
@@ -45,96 +45,86 @@ if not IDS_TO_FOLLOW_LIST:
     """)
     sys.exit()
 
-IDS_NOT_TO_RETWEET = os.getenv('IDS_NOT_TO_RETWEET', '')
-IDS_NOT_TO_RETWEET_LIST = create_list(IDS_NOT_TO_RETWEET)
-logging.debug(f'IDS_NOT_TO_RETWEET: {IDS_NOT_TO_RETWEET_LIST}')
+IDS_NOT_TO_RETWEET_ANYTHING = os.getenv('IDS_NOT_TO_RETWEET_ANYTHING', '')
+IDS_NOT_TO_RETWEET_ANYTHING_LIST = create_list(IDS_NOT_TO_RETWEET_ANYTHING)
+logging.debug(f'IDS_NOT_TO_RETWEET_ANYTHING: {IDS_NOT_TO_RETWEET_ANYTHING_LIST}')
 
-IDS_NOT_TO_RETWEET_RETWEETS = os.getenv('IDS_NOT_TO_RETWEET_RETWEETS', '')
-IDS_NOT_TO_RETWEET_RETWEETS_LIST = create_list(IDS_NOT_TO_RETWEET_RETWEETS)
-logging.debug(f'IDS_NOT_TO_RETWEET_RETWEETS: {IDS_NOT_TO_RETWEET_RETWEETS_LIST}')
+IDS_TO_RETWEET_RETWEETS = os.getenv('IDS_TO_RETWEET_RETWEETS', '')
+IDS_TO_RETWEET_RETWEETS_LIST = create_list(IDS_TO_RETWEET_RETWEETS)
+logging.debug(f'IDS_TO_RETWEET_RETWEETS: {IDS_TO_RETWEET_RETWEETS_LIST}')
 
-IDS_NOT_TO_RETWEET_QUOTES = os.getenv('IDS_NOT_TO_RETWEET_QUOTES', '')
-IDS_NOT_TO_RETWEET_QUOTES_LIST = create_list(IDS_NOT_TO_RETWEET_QUOTES)
-logging.debug(f'IDS_NOT_TO_RETWEET_QUOTES: {IDS_NOT_TO_RETWEET_QUOTES_LIST}')
+IDS_TO_RETWEET_QUOTES = os.getenv('IDS_TO_RETWEET_QUOTES', '')
+IDS_TO_RETWEET_QUOTES_LIST = create_list(IDS_TO_RETWEET_QUOTES)
+logging.debug(f'IDS_TO_RETWEET_QUOTES: {IDS_TO_RETWEET_QUOTES_LIST}')
 
-IDS_NOT_TO_RETWEET_REPLIES = os.getenv('IDS_NOT_TO_RETWEET_REPLIES', '')
-IDS_NOT_TO_RETWEET_REPLIES_LIST = create_list(IDS_NOT_TO_RETWEET_REPLIES)
-logging.debug(f'IDS_NOT_TO_RETWEET_REPLIES: {IDS_NOT_TO_RETWEET_REPLIES_LIST}')
+IDS_TO_REWTWEET_REPLIES = os.getenv('IDS_TO_REWTWEET_REPLIES', '')
+IDS_TO_REWTWEET_REPLIES_LIST = create_list(IDS_TO_REWTWEET_REPLIES)
+logging.debug(f'IDS_TO_REWTWEET_REPLIES: {IDS_TO_REWTWEET_REPLIES_LIST}')
 
 
 class CustomStreamingClient(tweepy.StreamingClient):
 
     def on_tweet(self, tweet):
         logging.debug(f'{"#"*20} Start {"#"*20}') 
-        logging.debug(f'tweet: {tweet}')
+        logging.info(f'tweet.author_id: {tweet.author_id}')
+        logging.info(f'tweet: {tweet}')
         logging.debug(f'tweet.data: {tweet.data}')
-        logging.debug(f'tweet.author_id: {tweet.author_id}')
-        logging.debug(f'tweet.in_reply_to_user_id: {tweet.in_reply_to_user_id}')
         logging.debug(f'tweet.referenced_tweets: {tweet.referenced_tweets}')
-        logging.debug(f'{dir(tweet)}')
+        #logging.debug(f'tweet.in_reply_to_user_id: {tweet.in_reply_to_user_id}')
+        #logging.debug(f'{dir(tweet)}')
 
         verified = False
         retweet = False
 
         while not verified:
             if tweet.in_reply_to_user_id:
-                logging.debug('This tweet is a Reply')
-                if tweet.author_id in IDS_NOT_TO_RETWEET_REPLIES_LIST:
-                    logging.debug('The author_id of this Reply is in the list not to retweet replies')
-                    verified = True
-                    retweet = False
-                    break
+                logging.info('This tweet is a Reply')
+                verified = True
+                if tweet.author_id in IDS_TO_REWTWEET_REPLIES_LIST:
+                    logging.debug('The author_id of this Reply is in the list to retweet replies')
+                    retweet = True
+                break
 
             # For Retweet or Comment (Quote)
             if 'referenced_tweets' in tweet.data.keys():
+                verified = True
                 for ea in tweet.data['referenced_tweets']:
                     if ea['type'] == 'quoted':
-                        logging.debug('This is a Quote')
-                        if tweet.author_id in IDS_NOT_TO_RETWEET_QUOTES_LIST:
-                            logging.debug('The author_id of this Quote is in the list not to retweet quotes')
-                            verified = True
-                            retweet = False
-                            break
+                        logging.info('This is a Quote')
+                        if tweet.author_id in IDS_TO_RETWEET_QUOTES_LIST:
+                            logging.debug('The author_id of this Quote is in the list to retweet quotes')
+                            retweet = True
                     if ea['type'] == 'retweeted':
-                        logging.debug('This is a Retweet')
-                        if tweet.author_id in IDS_NOT_TO_RETWEET_RETWEETS_LIST:
-                            logging.debug('The author_id of this Retweet is in the list not to retweet retweets')
-                            verified = True
-                            retweet = False
-                            break
+                        logging.info('This is a Retweet')
+                        if tweet.author_id in IDS_TO_RETWEET_RETWEETS_LIST:
+                            logging.debug('The author_id of this Retweet is in the list to retweet retweets')
+                            retweet = True
+                logging.debug('Check if this tweet has been retweeted')
+                break
 
-                    if int(ea['id']) in IDS_TO_FOLLOW_LIST:
-                        logging.debug('This Retreat or Quote should already have been "seen"')
-                        verified = True
-                        retweet = False
-                        break
-                # ... then "retweet":w
-                verified = True
-                retweet = False
             else:
                 verified = True
                 retweet = True
-                logging.debug('This is a simple Tweet, i.e. not a Reply, Retweet, nor Comment ("Quoted Tweet")')
+                logging.info('This is a simple Tweet')
 
-        logging.debug(f'{tweet.author_id} -- {IDS_NOT_TO_RETWEET_LIST}')
-        logging.debug(f'{type(tweet.author_id)} -- {type(IDS_NOT_TO_RETWEET_LIST)}')
-        if tweet.author_id in IDS_NOT_TO_RETWEET_LIST:
-            logging.debug('The author_id of this Tweet is in the list not to retweet')
-            verified = True
+        #logging.debug(f'{tweet.author_id} -- {IDS_NOT_TO_RETWEET_ANYTHING_LIST}')
+        #logging.debug(f'{type(tweet.author_id)} -- {type(IDS_NOT_TO_RETWEET_ANYTHING_LIST)}')
+        if tweet.author_id in IDS_NOT_TO_RETWEET_ANYTHING_LIST:
+            logging.info('The author_id of this Tweet is in the list not to retweet')
             retweet = False
 
         logging.debug(f'Verified: {verified}')
-        logging.debug(f'Retweet: {retweet}')
+        logging.info(f'Retweet: {retweet}')
         logging.debug(f'{"#"*20} END {"#"*20}') 
 
     def on_includes(self, includes):
-        logging.debug(f'includes {includes}')
+        pass #logging.debug(f'includes {includes}')
 
     def on_data(self, raw_data):
         super().on_data(raw_data)
 
-        my_data = json.loads(raw_data)
-        logging.debug(f'json.loads: {my_data}')
+        pass #my_data = json.loads(raw_data)
+        #logging.debug(f'json.loads: {my_data}')
             
 
 def main():
