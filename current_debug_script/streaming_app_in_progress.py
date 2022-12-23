@@ -155,7 +155,7 @@ class CustomStreamingClient(tweepy.StreamingClient):
             if tweet_type == 'simple':
                 logging.debug('add return id to file')
         if not verified:
-            logging.warning('How did this get here labeled "verified")
+            logging.warning('How did this get here labeled "verified"')
 
 
         logging.debug(f'{"#"*20} END {"#"*20}') 
