@@ -150,10 +150,13 @@ class CustomStreamingClient(tweepy.StreamingClient):
 
         logging.debug(f'Verified: {verified}')
         logging.info(f'Retweet: {retweet}')
-        if retweet:
+        if retweet and verified:
             logging.debug('call function to retween here')
             if tweet_type == 'simple':
                 logging.debug('add return id to file')
+        if not verified:
+            logging.warning('How did this get here labeled "verified")
+
 
         logging.debug(f'{"#"*20} END {"#"*20}') 
 
