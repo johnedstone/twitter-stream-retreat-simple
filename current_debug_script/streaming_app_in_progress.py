@@ -62,6 +62,10 @@ IDS_TO_REWTWEET_REPLIES_LIST = create_list(IDS_TO_REWTWEET_REPLIES)
 logging.debug(f'IDS_TO_REWTWEET_REPLIES: {IDS_TO_REWTWEET_REPLIES_LIST}')
 
 
+# Touch a file
+with open('/tmp/retweeted_ids', 'a') as fh: 
+    pass
+
 def check_if_already_retweeted(tweet_id):
     with open('/tmp/retweeted_ids', 'r') as fh:
         data = fh.read().splitlines()
@@ -148,7 +152,7 @@ class CustomStreamingClient(tweepy.StreamingClient):
         logging.info(f'Retweet: {retweet}')
         if retweet:
             logging.debug('call function to retween here')
-            if retweet_type == 'simple':
+            if tweet_type == 'simple':
                 logging.debug('add return id to file')
 
         logging.debug(f'{"#"*20} END {"#"*20}') 
