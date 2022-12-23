@@ -62,6 +62,19 @@ IDS_TO_REWTWEET_REPLIES_LIST = create_list(IDS_TO_REWTWEET_REPLIES)
 logging.debug(f'IDS_TO_REWTWEET_REPLIES: {IDS_TO_REWTWEET_REPLIES_LIST}')
 
 
+def check_if_already_retweeted(tweet_id):
+    with open('/tmp/retweeted_ids', 'r') as fh:
+        data = fh.read().splitlines()
+
+    if str(tweet_id) in data:
+        return True
+    else:
+        return False
+
+def add_retweet_to_file(tweet_id):
+    with open('/tmp/retweeted_ids', 'a') as fh:
+        fh.write(f'{tweet_id}\n')
+
 class CustomStreamingClient(tweepy.StreamingClient):
 
     def on_tweet(self, tweet):
@@ -75,11 +88,14 @@ class CustomStreamingClient(tweepy.StreamingClient):
 
         verified = False
         retweet = False
+        tweet_type = None
+        referenced_tweet_id = None
 
         while not verified:
             if tweet.in_reply_to_user_id:
                 logging.info('This tweet is a Reply')
                 verified = True
+                tweet_type = 'reply'
                 if tweet.author_id in IDS_TO_REWTWEET_REPLIES_LIST:
                     logging.debug('The author_id of this Reply is in the list to retweet replies')
                     retweet = True
@@ -91,21 +107,36 @@ class CustomStreamingClient(tweepy.StreamingClient):
                 for ea in tweet.referenced_tweets:
                     if ea.type == 'quoted':
                         logging.info('This is a Quote')
+                        tweet_type = 'quote'
                         if tweet.author_id in IDS_TO_RETWEET_QUOTES_LIST:
                             logging.debug('The author_id of this Quote is in the list to retweet quotes')
-                            retweet = True
+
+                            if check_if_already_retweeted(ea.id):
+                                logging.info('The original tweet of this Retweet has already been retweeted')
+                                retweet = False
+                            else:
+                                retweet = True
+                                add_retweet_to_file(ea.id)
+
                     if ea.type == 'retweeted':
                         logging.info('This is a Retweet')
+                        tweet_type = 'retweet'
                         if tweet.author_id in IDS_TO_RETWEET_RETWEETS_LIST:
                             logging.debug('The author_id of this Retweet is in the list to retweet retweets')
-                            retweet = True
-                logging.debug('Check if this tweet has been retweeted')
+
+                            if check_if_already_retweeted(ea.id):
+                                logging.info('The original tweet of this Retweet has already been retweeted')
+                                retweet = False
+                            else:
+                                retweet = True
+                                add_retweet_to_file(ea.id)
                 break
 
             else:
                 verified = True
                 retweet = True
                 logging.info('This is a simple Tweet')
+                tweet_type = 'simple'
 
         #logging.debug(f'{tweet.author_id} -- {IDS_NOT_TO_RETWEET_ANYTHING_LIST}')
         #logging.debug(f'{type(tweet.author_id)} -- {type(IDS_NOT_TO_RETWEET_ANYTHING_LIST)}')
@@ -115,6 +146,11 @@ class CustomStreamingClient(tweepy.StreamingClient):
 
         logging.debug(f'Verified: {verified}')
         logging.info(f'Retweet: {retweet}')
+        if retweet:
+            logging.debug('call function to retween here')
+            if retweet_type == 'simple':
+                logging.debug('add return id to file')
+
         logging.debug(f'{"#"*20} END {"#"*20}') 
 
     def on_includes(self, includes):
