@@ -11,6 +11,12 @@ LOG_TO_FILE = os.getenv('LOG_TO_FILE', 'no').lower() == 'yes'
 LOGGING_FILE_NAME = os.getenv('LOGGING_FILE_NAME', 'debug.log')
 LOGLEVEL = os.environ.get('LOGLEVEL', 'INFO').upper()
 
+BEARER_TOKEN = os.getenv('BEARER_TOKEN')
+CONSUMER_KEY = os.getenv('CONSUMER_KEY')
+CONSUMER_SECRET = os.getenv('CONSUMER_SECRET')
+ACCESS_TOKEN = os.getenv('ACCESS_TOKEN')
+ACCESS_TOKEN_SECRET = os.getenv('ACCESS_TOKEN_SECRET')
+
 
 if LOG_TO_FILE:
     logging.basicConfig(level=LOGLEVEL,
@@ -26,12 +32,22 @@ def create_list(string_list):
 
     return list_to_return
 
+def create_client():  # API v2
+    client = tweepy.Client(
+        consumer_key=consumer_key,
+        consumer_secret=consumer_secret,
+        access_token=access_token,
+        access_token_secret=access_token_secret,
+        wait_on_rate_limit=True)
+
+    log.info("client created")
+
+    return client
+
 def get_stream_rules():
     stream_rules = [tweepy.StreamRule(value=f'from: {ea}', tag=f'{ea}', id=f'{ea}') for ea in IDS_TO_RETWEET_TWEETS_LIST]
 
     return stream_rules
-
-bearer_token = os.getenv('BEARER_TOKEN')
 
 IDS_TO_RETWEET_TWEETS = os.getenv('IDS_TO_RETWEET_TWEETS', '')
 IDS_TO_RETWEET_TWEETS_LIST = create_list(IDS_TO_RETWEET_TWEETS)
@@ -178,7 +194,7 @@ def main():
         stream_rules = get_stream_rules()
         logging.info(f'Stream rules: {stream_rules}')
 
-        streaming_client = CustomStreamingClient(bearer_token)
+        streaming_client = CustomStreamingClient(BEARER_TOKEN)
         streaming_client.add_rules(add=stream_rules)  # only need to do once it appears, but no harm in calling it
 
         current_stream_rules = streaming_client.get_rules()

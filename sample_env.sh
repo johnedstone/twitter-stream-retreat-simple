@@ -22,4 +22,9 @@ LOG_TO_FILE='yes'
 # Optional - default: 'info'
 LOGLEVEL='debug'
 
+CONSUMER_KEY='the consumer key here'
+CONSUMER_SECRET='the consumer secret here'
+ACCESS_TOKEN='the access token here'
+ACCESS_TOKEN_SECRET='the access token secret here'
+
 # vim: ai et ts=4 sw=4 sts=4 nu
