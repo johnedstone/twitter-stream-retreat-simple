@@ -3,6 +3,7 @@
   vars:
     ansible_python_interpreter: /usr/bin/python3
     HOME: "{{ lookup('env', 'HOME') }}"
+    USER: "{{ lookup('env', 'USER') }}"
   vars_files:
     - "{{ HOME }}/configuration/private_vars.yaml"
   connection: local
@@ -12,6 +13,6 @@
     - role: virtualenv
       tags: [virtualenv]
     - role: install_app
-      tags: [install_app]
+      tags: [install-app]
 
 # vim: ai et ts=2 sw=2 sts=2 nu

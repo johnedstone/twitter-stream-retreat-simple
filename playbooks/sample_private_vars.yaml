@@ -3,6 +3,7 @@ HOSTNAME: 'your-hosthame'
 FQDN: 'your-hostname.yourdomain.com'
 LOCAL_TIMEZONE: 'America/New_York'
 
+PATH_TO_RETWEET_APP: '/path/to/retreat/app'
 
 
 
