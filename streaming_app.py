@@ -18,8 +18,6 @@ CONSUMER_SECRET = os.getenv('CONSUMER_SECRET')
 ACCESS_TOKEN = os.getenv('ACCESS_TOKEN')
 ACCESS_TOKEN_SECRET = os.getenv('ACCESS_TOKEN_SECRET')
 
-CLIENT_TO_RETWEET = None
-
 if LOG_TO_FILE:
     logging.basicConfig(level=LOGLEVEL,
             format='%(asctime)s [%(levelname)s]: %(message)s', filename=LOGGING_FILE_NAME)
@@ -98,9 +96,15 @@ def add_retweet_to_file(tweet_id):
 
 class CustomStreamingClient(tweepy.StreamingClient):
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.client_to_retweet = create_client()
+        logging.debug(f'client_to_retweet: {self.client_to_retweet}')
+
     def on_tweet(self, tweet):
         logging.debug(f'{"#"*20} Start {"#"*20}') 
         logging.info(f'tweet.author_id: {tweet.author_id}')
+        logging.info(f'tweet.id: {tweet.id}')
         logging.info(f'tweet: {tweet}')
         logging.debug(f'tweet.referenced_tweets: {tweet.referenced_tweets}')
         logging.debug(f'tweet.data: {tweet.data}')
@@ -123,6 +127,9 @@ class CustomStreamingClient(tweepy.StreamingClient):
 
                     # Not tested yet
                     #add_retweet_to_file(tweet.id)
+                else:
+                    logging.debug('The author_id of this Reply is NOT in the list to retweet replies')
+
                 break
 
             # For Retweet or Comment (Quote)
@@ -141,6 +148,8 @@ class CustomStreamingClient(tweepy.StreamingClient):
                             else:
                                 retweet = True
                                 add_retweet_to_file(ea.id)
+                        else:
+                            logging.debug('The author_id of this Quote is NOT in the list to retweet quotes')
 
                     if ea.type == 'retweeted':
                         logging.info('This is a Retweet')
@@ -154,6 +163,8 @@ class CustomStreamingClient(tweepy.StreamingClient):
                             else:
                                 retweet = True
                                 add_retweet_to_file(ea.id)
+                        else:
+                            logging.debug('The author_id of this Retweet is NOT in the list to retweet retweets')
                 break
 
             else:
@@ -166,18 +177,15 @@ class CustomStreamingClient(tweepy.StreamingClient):
         #logging.debug(f'{tweet.author_id} -- {IDS_NOT_TO_RETWEET_ANYTHING_LIST}')
         #logging.debug(f'{type(tweet.author_id)} -- {type(IDS_NOT_TO_RETWEET_ANYTHING_LIST)}')
         if tweet.author_id in IDS_NOT_TO_RETWEET_ANYTHING_LIST:
-            logging.info('The author_id of this Tweet is in the list not to retweet')
+            logging.info('The author_id of this Tweet is in the list to NOT retweet ANYTHING')
             retweet = False
 
         logging.debug(f'Verified: {verified}')
         logging.info(f'Retweet: {retweet}')
 
         if retweet and verified:
-            if CLIENT_TO_RETWEET:
-                retweet_response = CLIENT_TO_RETWEET.retweet(id=tweet.id)
-                logging.debug(f'retweet_response: {retweet_response}')
-            else:
-                logging.warning('Missing the "CLIENT_TO_RETWEET", yikes!')
+            retweet_response = self.client_to_retweet.retweet(tweet_id=tweet.id)
+            logging.debug(f'retweet_response: {retweet_response}')
 
         if not verified:
             logging.warning('How did this get here labeled "verified"')
@@ -197,7 +205,6 @@ class CustomStreamingClient(tweepy.StreamingClient):
 
 def main():
     try:
-        CLIENT_TO_RETWEET = create_client()
         msg = '########## Starting tweepy.StreamClient ##########'
         logging.info(msg)
 
