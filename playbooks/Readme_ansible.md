@@ -7,8 +7,13 @@ ansible-playbook --check --diff --flush-cache --tags prep-work -i inventory.ini 
 ansible-playbook --diff --flush-cache --tags prep-work -i inventory.ini playbook.yaml
 ```
 Then reboot
+```
+ansible-playbook --check --diff --flush-cache --tags virtualenv -i inventory.ini playbook.yaml
+ansible-playbook --diff --flush-cache --tags virtualenv -i inventory.ini playbook.yaml
+```
 
 
+#### Hold: old
 ansible-playbook --check --flush-cache --diff -i inventory.ini playbook.yaml 
 
 ansible-playbook --flush-cache --diff -i inventory.ini playbook.yaml
