@@ -1,7 +1,7 @@
 ---
-#- name: Check hostame variable
-#  debug:
-#    msg: "hostname: {{ HOSTNAME }}"
+- name: Check hostame variable
+  debug:
+    msg: "HOSTNAME: {{ HOSTNAME }}"
 
 - name: setup vimrc
   copy:
@@ -14,43 +14,26 @@
     src: hostname.j2
     dest: /etc/hostname
 
+- name: add hostname to /etc/hosts
+  become: yes
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    line: "127.0.0.1 {{ FQDN }} {{ HOSTNAME }}"
+    create: yes
+
+- name: release cloud cfg from managing /etc/hosts
+  become: yes
+  ansible.builtin.lineinfile:
+    path: /etc/cloud/cloud.cfg.d/01_debian_cloud.cfg
+    regexp: "^manage_etc_hosts:"
+    line: "manage_etc_hosts: false"
+
 - name: set timezone correctly
   become: yes
   file:
-    src: "/usr/share/zoneinfo/{{ local_timezone }}"
+    src: "/usr/share/zoneinfo/{{ LOCAL_TIMEZONE }}"
     path: /etc/localtime
     state: link
 
-# https://www.cyberciti.biz/faq/ansible-apt-update-all-packages-on-ubuntu-debian-linux/
-- name: Update apt repo and cache on all Debian/Ubuntu boxes
-  become: yes
-  apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
-  changed_when: False
-
-- name: Upgrade all packages on servers
-  become: yes
-  apt: upgrade=dist force_apt_get=yes
-
-- name: Check if a reboot is needed on all servers
-  register: reboot_required_file
-  stat: path=/var/run/reboot-required get_md5=no
-
-- name: Reboot server if kernel updated
-  become: yes
-  reboot:
-    msg: "Reboot initiated by Ansible for kernel updates"
-    connect_timeout: 5
-    reboot_timeout: 300
-    pre_reboot_delay: 0
-    post_reboot_delay: 30
-    test_command: uptime
-  when: reboot_required_file.stat.exists
-
-- name: install apt packages
-  become: yes
-  apt:
-    name: ["python3-virtualenv"]
-    state: present
-    update-cache: yes
- 
 # vim: ai et ts=2 sw=2 sts=2 nu
+

@@ -1,6 +1,12 @@
 ---
-HOSTNAME: 'your.hostname.org'
-local_timezone: 'America/New_York'
+HOSTNAME: 'your-hosthame'
+FQDN: 'your-hostname.yourdomain.com'
+LOCAL_TIMEZONE: 'America/New_York'
+
+
+
+
+
 app_name: 'your_app_name' # used to make app directory
 HELLO_WORLD_APP_SCRIPT: hello_world.py
 PATH_TO_PYTHON: '/path/to/virtualenv/python, e.g. /opt/apps/my_app/venv/bin/python'

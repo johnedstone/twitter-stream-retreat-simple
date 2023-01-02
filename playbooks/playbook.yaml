@@ -4,11 +4,11 @@
     ansible_python_interpreter: /usr/bin/python3
     HOME: "{{ lookup('env', 'HOME') }}"
   vars_files:
-    - /opt/apps/configuration/private_vars.yaml
+    - "{{ HOME }}/configuration/private_vars.yaml"
   connection: local
   roles:
     - role: prep_work
-      tags: [prep_work]
+      tags: [prep-work]
     - role: virtualenv
       tags: [virtualenv]
     - role: install_app
