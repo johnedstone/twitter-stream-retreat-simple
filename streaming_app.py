@@ -8,8 +8,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 LOG_TO_FILE = os.getenv('LOG_TO_FILE', 'no').lower() == 'yes'
-LOGGING_FILE_NAME = os.getenv('LOGGING_FILE_NAME', 'debug.log')
+LOGGING_FILE_NAME = os.getenv('LOGGING_FILE_NAME', '/tmp/debug.log')
 LOGLEVEL = os.environ.get('LOGLEVEL', 'INFO').upper()
+PATH_TO_RECORD_RETWEETS_ID = os.environ.get('PATH_TO_RECORD_RETWEETS_ID', '/tmp/retweeted_ids')
 
 BEARER_TOKEN = os.getenv('BEARER_TOKEN')
 CONSUMER_KEY = os.getenv('CONSUMER_KEY')
@@ -17,6 +18,7 @@ CONSUMER_SECRET = os.getenv('CONSUMER_SECRET')
 ACCESS_TOKEN = os.getenv('ACCESS_TOKEN')
 ACCESS_TOKEN_SECRET = os.getenv('ACCESS_TOKEN_SECRET')
 
+CLIENT_TO_RETWEET = None
 
 if LOG_TO_FILE:
     logging.basicConfig(level=LOGLEVEL,
@@ -34,25 +36,24 @@ def create_list(string_list):
 
 def create_client():  # API v2
     client = tweepy.Client(
-        consumer_key=consumer_key,
-        consumer_secret=consumer_secret,
-        access_token=access_token,
-        access_token_secret=access_token_secret,
-        wait_on_rate_limit=True)
+        consumer_key=CONSUMER_KEY,
+        consumer_secret=CONSUMER_SECRET,
+        access_token=ACCESS_TOKEN,
+        access_token_secret=ACCESS_TOKEN_SECRET)
 
-    log.info("client created")
+    logging.info("client created")
 
     return client
 
 def get_stream_rules():
-    stream_rules = [tweepy.StreamRule(value=f'from: {ea}', tag=f'{ea}', id=f'{ea}') for ea in IDS_TO_RETWEET_TWEETS_LIST]
+    stream_rules = [tweepy.StreamRule(value=f'from: {ea}', tag=f'{ea}', id=f'{ea}') for ea in IDS_TO_FOLLOW_LIST]
 
     return stream_rules
 
-IDS_TO_RETWEET_TWEETS = os.getenv('IDS_TO_RETWEET_TWEETS', '')
-IDS_TO_RETWEET_TWEETS_LIST = create_list(IDS_TO_RETWEET_TWEETS)
-logging.debug(f'IDS_TO_RETWEET_TWEETS (to Retweet Simple Tweets): {IDS_TO_RETWEET_TWEETS}')
-if not IDS_TO_RETWEET_TWEETS_LIST:
+IDS_TO_FOLLOW = os.getenv('IDS_TO_FOLLOW', '')
+IDS_TO_FOLLOW_LIST = create_list(IDS_TO_FOLLOW)
+logging.debug(f'IDS_TO_FOLLOW: {IDS_TO_FOLLOW}')
+if not IDS_TO_FOLLOW_LIST:
     logging.error("""
 
     Yikes! There are no IDs to follow!!
@@ -79,11 +80,11 @@ logging.debug(f'IDS_TO_REWTWEET_REPLIES: {IDS_TO_REWTWEET_REPLIES_LIST}')
 
 
 # Touch a file
-with open('/tmp/retweeted_ids', 'a') as fh: 
+with open(PATH_TO_RECORD_RETWEETS_ID, 'a') as fh: 
     pass
 
 def check_if_already_retweeted(tweet_id):
-    with open('/tmp/retweeted_ids', 'r') as fh:
+    with open(PATH_TO_RECORD_RETWEETS_ID, 'r') as fh:
         data = fh.read().splitlines()
 
     if str(tweet_id) in data:
@@ -92,7 +93,7 @@ def check_if_already_retweeted(tweet_id):
         return False
 
 def add_retweet_to_file(tweet_id):
-    with open('/tmp/retweeted_ids', 'a') as fh:
+    with open(PATH_TO_RECORD_RETWEETS_ID, 'a') as fh:
         fh.write(f'{tweet_id}\n')
 
 class CustomStreamingClient(tweepy.StreamingClient):
@@ -119,6 +120,9 @@ class CustomStreamingClient(tweepy.StreamingClient):
                 if tweet.author_id in IDS_TO_REWTWEET_REPLIES_LIST:
                     logging.debug('The author_id of this Reply is in the list to retweet replies')
                     retweet = True
+
+                    # Not tested yet
+                    #add_retweet_to_file(tweet.id)
                 break
 
             # For Retweet or Comment (Quote)
@@ -157,6 +161,7 @@ class CustomStreamingClient(tweepy.StreamingClient):
                 retweet = True
                 logging.info('This is a simple Tweet')
                 tweet_type = 'simple'
+                add_retweet_to_file(tweet.id)
 
         #logging.debug(f'{tweet.author_id} -- {IDS_NOT_TO_RETWEET_ANYTHING_LIST}')
         #logging.debug(f'{type(tweet.author_id)} -- {type(IDS_NOT_TO_RETWEET_ANYTHING_LIST)}')
@@ -166,10 +171,14 @@ class CustomStreamingClient(tweepy.StreamingClient):
 
         logging.debug(f'Verified: {verified}')
         logging.info(f'Retweet: {retweet}')
+
         if retweet and verified:
-            logging.debug('call function to retween here')
-            if tweet_type == 'simple':
-                logging.debug('add return id to file')
+            if CLIENT_TO_RETWEET:
+                retweet_response = CLIENT_TO_RETWEET.retweet(id=tweet.id)
+                logging.debug(f'retweet_response: {retweet_response}')
+            else:
+                logging.warning('Missing the "CLIENT_TO_RETWEET", yikes!')
+
         if not verified:
             logging.warning('How did this get here labeled "verified"')
 
@@ -188,6 +197,7 @@ class CustomStreamingClient(tweepy.StreamingClient):
 
 def main():
     try:
+        CLIENT_TO_RETWEET = create_client()
         msg = '########## Starting tweepy.StreamClient ##########'
         logging.info(msg)
 
