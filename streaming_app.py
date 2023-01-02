@@ -102,7 +102,7 @@ class CustomStreamingClient(tweepy.StreamingClient):
         logging.debug(f'client_to_retweet: {self.client_to_retweet}')
 
     def on_tweet(self, tweet):
-        logging.debug(f'{"#"*20} Start {"#"*20}') 
+        logging.info(f'{"#"*20} Start {"#"*20}') 
         logging.info(f'tweet.author_id: {tweet.author_id}')
         logging.info(f'tweet.id: {tweet.id}')
         logging.info(f'tweet: {tweet}')
