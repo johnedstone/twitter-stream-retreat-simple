@@ -11,6 +11,7 @@ This is simple example describing:
     * install python3-virtualenv `sudo apt install python3-virtualenv`
     * Read ansible instructions in [playbooks/Readme_ansible.md](https://github.com/johnedstone/twitter-stream-retreat-simple/tree/main/playbooks)
 
+
 <!--
 # vim: ai et ts=4 sw=4 sts=4 nu
 -->
