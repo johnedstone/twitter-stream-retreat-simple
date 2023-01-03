@@ -184,11 +184,21 @@ class CustomStreamingClient(tweepy.StreamingClient):
         logging.info(f'Retweet: {retweet}')
 
         if retweet and verified:
-            retweet_response = self.client_to_retweet.retweet(tweet_id=tweet.id)
-            logging.debug(f'retweet_response: {retweet_response}')
+            # One last check
+            if tweet.author_id in IDS_TO_FOLLOW_LIST:
+                retweet_response = self.client_to_retweet.retweet(tweet_id=tweet.id)
+                logging.debug(f'retweet_response: {retweet_response}')
+                logging.debug(f'retweet_response.data: {retweet_response.data}')
+                logging.debug(f'retweet_response.errors: {retweet_response.errors}')
+            else:
+                logging.error(f'Yikes!! How did this tweet even get here!!')
+
 
         if not verified:
-            logging.warning('How did this get here labeled "verified"')
+            logging.warning('Not Verified:  How did this get here labeled "unverified"')
+
+        if not retweet:
+            logging.info(f'Not retweeted: retweet={retweet}, tweet_id={tweet.id}')
 
 
         logging.debug(f'{"#"*20} END {"#"*20}') 
@@ -199,8 +209,9 @@ class CustomStreamingClient(tweepy.StreamingClient):
     def on_data(self, raw_data):
         super().on_data(raw_data)
 
-        pass #my_data = json.loads(raw_data)
-        #logging.debug(f'json.loads: {my_data}')
+        return
+        my_data = json.loads(raw_data)
+        logging.debug(f'json.loads: {my_data}')
             
 
 def main():
@@ -217,7 +228,7 @@ def main():
         current_stream_rules = streaming_client.get_rules()
         logging.info(f'Current stream rules: {stream_rules}')
 
-        streaming_client.filter(expansions=['author_id'], user_fields=['username'],
+        streaming_client.filter(expansions=['author_id'], user_fields=['username', 'name'],
                 tweet_fields=['in_reply_to_user_id', 'referenced_tweets'])
         #streaming_client.filter()
     
