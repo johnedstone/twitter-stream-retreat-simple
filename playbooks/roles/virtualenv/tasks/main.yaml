@@ -27,6 +27,6 @@
     requirements: "{{ PATH_TO_RETWEET_APP }}/requirements.txt"
     virtualenv: "{{ PATH_TO_RETWEET_APP }}/venv"
     virtualenv_command: /usr/bin/virtualenv
-  when: app_dir.stat.exists
+  when: app_dir.stat.exists and not ansible_check_mode
 
 # vim: ai et ts=2 sts=2 sw=2 nu

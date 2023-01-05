@@ -1,4 +1,4 @@
-/var/log/{{ app_name }}/*.log {
+/var/log/{{ APP_NAME }}/*.log {
     weekly
     missingok
     rotate 52
@@ -7,6 +7,6 @@
     create 0660 ubuntu ubuntu
     sharedscripts
     postrotate
-       /usr/bin/systemctl restart {{ app_name }}
+       /usr/bin/systemctl restart {{ APP_NAME }}
 endscript
 }

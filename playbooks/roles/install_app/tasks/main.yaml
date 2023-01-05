@@ -2,73 +2,74 @@
 - name: Create app logging directories
   become: yes
   file:
-    path: "/var/log/{{ app_name }}"
-    owner: ubuntu
-    group: ubuntu
-    mode: 0775
     state: directory
+    path: "/var/log/{{ APP_NAME }}"
+    owner: "{{ USER }}"
+    group: "{{ USER }}"
+    mode: 0775
 
-- name: Enable logrotate for "{{ app_name }}"
+- name: Enable logrotate for "{{ APP_NAME }}"
   become: yes
   template:
     src: templates/logrotate.j2
-    dest: "/etc/logrotate.d/{{ app_name}}"
+    dest: "/etc/logrotate.d/{{ APP_NAME}}"
 
 - name: Install environment variables
   template:
     src: env.j2
-    dest: "/opt/apps/{{ app_name }}/.env"
-    owner: ubuntu
-    group: ubuntu
-    mode: 0600
-  notify:
-    - Restart twitter app
+    dest: "{{ PATH_TO_RETWEET_APP }}/.env"
+    owner: "{{ USER }}"
+    group: "{{ USER }}"
+    mode: 0644
 
-- name: Install hello_world app file
-  template:
-    src: "{{ HELLO_WORLD_APP_SCRIPT }}.j2"
-    dest: "/opt/apps/{{ app_name }}/{{ HELLO_WORLD_APP_SCRIPT }}"
-  notify:
-    - Restart twitter app
+#  notify:
+#- Restart app
 
-- name: Create systemd app service file
-  become: yes
-  template:
-    src: templates/twitter_app_service.j2
-    dest: "/usr/lib/systemd/system/{{ app_name }}.service"
-  notify:
-    - Restart twitter app
+- name: Install app script 
+  copy:
+    src: "{{ APP_SCRIPT }}"
+    dest: "{{ PATH_TO_RETWEET_APP}}/{{ APP_SCRIPT }}"
+#notify:
+#- Restart app
 
-- name: App enable & start
-  become: yes
-  service:
-    name: "{{ app_name }}"
-    enabled: no
-    #state: started
-
-- name: Rsync twitter helper scripts
-  synchronize:
-    src: files/twitter_helper_scripts
-    dest: "/opt/apps/{{ app_name }}/"
-    recursive: yes
-    checksum: yes
-    archive: no
-
-- name: Install production app
-  synchronize:
-    src: "files/{{ item }}"
-    dest: "/opt/apps/{{ app_name }}/{{ item }}"
-  with_items: "{{ Production_scripts }}"
-  notify:
-    - Restart twitter app
-
-- name: Symbolic links for helper scripts
-  file:
-    src: "/opt/apps/{{ app_name }}/{{ item }}"
-    dest: "/opt/apps/{{ app_name }}/twitter_helper_scripts/{{ item }}"
-    state: link
-  with_items:
-    - logger.py
-    - config.py
-
-# vim: ai et ts=2 sw=2 sts=2 nu
+#- name: Create systemd app service file
+#  become: yes
+#  template:
+#    src: templates/twitter_app_service.j2
+#    dest: "/usr/lib/systemd/system/{{ app_name }}.service"
+#  notify:
+#    - Restart twitter app
+#
+#- name: App enable & start
+#  become: yes
+#  service:
+#    name: "{{ app_name }}"
+#    enabled: no
+#    #state: started
+#
+#- name: Rsync twitter helper scripts
+#  synchronize:
+#    src: files/twitter_helper_scripts
+#    dest: "/opt/apps/{{ app_name }}/"
+#    recursive: yes
+#    checksum: yes
+#    archive: no
+#
+#- name: Install production app
+#  synchronize:
+#    src: "files/{{ item }}"
+#    dest: "/opt/apps/{{ app_name }}/{{ item }}"
+#  with_items: "{{ Production_scripts }}"
+#  notify:
+#    - Restart twitter app
+#
+#- name: Symbolic links for helper scripts
+#  file:
+#    src: "/opt/apps/{{ app_name }}/{{ item }}"
+#    dest: "/opt/apps/{{ app_name }}/twitter_helper_scripts/{{ item }}"
+#    state: link
+#  with_items:
+#    - logger.py
+#    - config.py
+#
+## vim: ai et ts=2 sw=2 sts=2 nu
