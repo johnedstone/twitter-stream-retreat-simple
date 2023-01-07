@@ -1,8 +1,8 @@
-- name: "Restart {{ app_name }}"
-  listen: Restart twitter app 
+- name: "Restart {{ APP_NAME }}"
+  listen: Restart app 
   become: yes
   service:
-    name: "{{ app_name }}"
+    name: "{{ APP_NAME }}"
     state: restarted
     daemon-reload: yes
   when: not ansible_check_mode

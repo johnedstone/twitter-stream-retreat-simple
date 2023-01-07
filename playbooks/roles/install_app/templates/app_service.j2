@@ -1,0 +1,16 @@
+[Unit]
+Description={{ APP_NAME }} daemon
+After=network.target
+
+[Service]
+Type=simple
+User={{ USER }}
+Group={{ USER }}
+Restart=always
+
+ExecStart={{ PATH_TO_RETWEET_APP }}/venv/bin/python {{ PATH_TO_RETWEET_APP }}/{{ APP_SCRIPT }}
+
+[Install]
+WantedBy=multi-user.target
+
+# vim: ai et ts=4 sw=4 sts=4 nu

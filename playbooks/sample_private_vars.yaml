@@ -5,7 +5,11 @@ LOCAL_TIMEZONE: 'America/New_York'
 
 PATH_TO_RETWEET_APP: '/path/to/retweet_app'
 APP_NAME: 'retweet_app'
+
+# Use for first install
 APP_SCRIPT: 'hello.py' 
+# Use for production
+# streaming_app.py
 
 # Intended for .env file
 LOG_TO_FILE: 'yes' 

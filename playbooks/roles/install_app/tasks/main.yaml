@@ -21,55 +21,36 @@
     owner: "{{ USER }}"
     group: "{{ USER }}"
     mode: 0644
-
-#  notify:
-#- Restart app
+  notify:
+    - Restart app
 
 - name: Install app script 
   copy:
     src: "{{ APP_SCRIPT }}"
     dest: "{{ PATH_TO_RETWEET_APP}}/{{ APP_SCRIPT }}"
-#notify:
-#- Restart app
+  notify:
+    - Restart app
 
-#- name: Create systemd app service file
-#  become: yes
-#  template:
-#    src: templates/twitter_app_service.j2
-#    dest: "/usr/lib/systemd/system/{{ app_name }}.service"
-#  notify:
-#    - Restart twitter app
-#
-#- name: App enable & start
-#  become: yes
-#  service:
-#    name: "{{ app_name }}"
-#    enabled: no
-#    #state: started
-#
-#- name: Rsync twitter helper scripts
-#  synchronize:
-#    src: files/twitter_helper_scripts
-#    dest: "/opt/apps/{{ app_name }}/"
-#    recursive: yes
-#    checksum: yes
-#    archive: no
-#
-#- name: Install production app
-#  synchronize:
-#    src: "files/{{ item }}"
-#    dest: "/opt/apps/{{ app_name }}/{{ item }}"
-#  with_items: "{{ Production_scripts }}"
-#  notify:
-#    - Restart twitter app
-#
-#- name: Symbolic links for helper scripts
-#  file:
-#    src: "/opt/apps/{{ app_name }}/{{ item }}"
-#    dest: "/opt/apps/{{ app_name }}/twitter_helper_scripts/{{ item }}"
-#    state: link
-#  with_items:
-#    - logger.py
-#    - config.py
-#
-## vim: ai et ts=2 sw=2 sts=2 nu
+- name: Create systemd app service file
+  become: yes
+  template:
+    src: templates/app_service.j2
+    dest: "/usr/lib/systemd/system/{{ APP_NAME }}.service"
+  notify:
+    - Restart app
+
+- name: "Check if systemd file exists"
+  become: yes
+  stat:
+    path: "/usr/lib/systemd/system/{{ APP_NAME }}.service"
+  register: systemd_file
+
+- name: App enable & start
+  become: yes
+  service:
+    name: "{{ APP_NAME }}"
+    enabled: yes
+    state: started
+  when: systemd_file.stat.exists
+
+# vim: ai et ts=2 sw=2 sts=2 nu
