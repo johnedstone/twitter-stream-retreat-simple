@@ -5,7 +5,6 @@ This is simple example describing:
 * Using Twitter API v2
 
 ## Ansible notes
-* Currently under development - do not use (yet)
 * Installed with an ansible playbook on an AWS ec2 instance (Debian)
     * install ansible `sudo apt upgrade && sudo apt install ansible`
     * install python3-virtualenv `sudo apt install python3-virtualenv`
