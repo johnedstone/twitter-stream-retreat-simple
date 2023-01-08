@@ -15,10 +15,6 @@ ansible-playbook --diff --flush-cache --tags virtualenv -i inventory.ini playboo
 
 ansible-playbook --check --diff --flush-cache --tags install-app -i inventory.ini playbook.yaml
 ansible-playbook --diff --flush-cache --tags install-app -i inventory.ini playbook.yaml
-
-ansible-playbook --check --diff --flush-cache --tags install-app  -i inventory.ini playbook.yaml
-ansible-playbook --diff --flush-cache --tags install-app  -i inventory.ini playbook.yaml
-
 ```
 
 And then finally:
