@@ -1,7 +1,7 @@
 ## Description
 This is simple example describing:
 * Retweeting a list of twitter accounts into one twitter account
-* Using [tweepy.Stream](https://docs.tweepy.org/en/stable/streaming.html)
+* Using [tweepy.StreamingClient](https://docs.tweepy.org/en/stable/streaming.html)
 * Using Twitter API v2
 
 ## Ansible notes
