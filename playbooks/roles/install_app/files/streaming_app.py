@@ -43,6 +43,13 @@ def create_client():  # API v2
 
     return client
 
+# using with shell
+def get_screen_name(user_id):
+    client = tweepy.Client(BEARER_TOKEN)
+    user = client.get_user(id=user_id)
+
+    return user.data.username
+
 def get_stream_rules():
     stream_rules = [tweepy.StreamRule(value=f'from: {ea}', tag=f'{ea}', id=f'{ea}') for ea in IDS_TO_FOLLOW_LIST]
 
