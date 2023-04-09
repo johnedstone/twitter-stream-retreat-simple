@@ -4,7 +4,7 @@
     rotate 52
     compress
     notifempty
-    create 0660 ubuntu ubuntu
+    create 0640 admin admin
     sharedscripts
     postrotate
        /usr/bin/systemctl restart {{ APP_NAME }}

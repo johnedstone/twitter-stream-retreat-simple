@@ -6,7 +6,7 @@
     path: "/var/log/{{ APP_NAME }}"
     owner: "{{ USER }}"
     group: "{{ USER }}"
-    mode: 0775
+    mode: 0750
 
 - name: Enable logrotate for "{{ APP_NAME }}"
   become: yes
